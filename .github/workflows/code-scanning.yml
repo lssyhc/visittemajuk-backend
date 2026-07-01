@@ -2,7 +2,7 @@ name: Code Scanning
 
 on:
   push:
-    branches: [main, dev, "dev_*"]
+    branches: [main]
   pull_request:
     branches: [main, dev]
   schedule:
