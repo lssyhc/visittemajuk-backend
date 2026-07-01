@@ -1,0 +1,17 @@
+{
+    "recommendations": [
+        "bmewburn.vscode-intelephense-client",
+        "open-southeners.laravel-pint",
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "dansysanalyst.pest-snippets",
+        "recca0120.vscode-phpunit",
+        "swordev.phpstan",
+        "mikestead.dotenv",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker"
+    ],
+
+    "unwantedRecommendations": [
+        "junstyle.php-cs-fixer"
+    ]
+}

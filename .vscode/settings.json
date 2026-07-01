@@ -1,0 +1,61 @@
+{
+    "files.exclude": {
+        "_ide_helper.php": true,
+        "_ide_helper_models.php": true,
+        ".phpstorm.meta.php": true
+    },
+
+    "search.exclude": {
+        "**/vendor": true,
+        "**/node_modules": true,
+        "**/storage/framework": true,
+        "**/storage/logs": true,
+        "**/bootstrap/cache": true,
+        "**/public/build": true,
+        "_ide_helper.php": true,
+        "_ide_helper_models.php": true,
+        ".phpstorm.meta.php": true,
+        "*.lock": true
+    },
+
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "files.associations": {
+        ".env*": "dotenv"
+    },
+
+    "editor.guides.bracketPairs": "active",
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+
+    "[php]": {
+        "editor.defaultFormatter": "open-southeners.laravel-pint",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4
+    },
+
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.tabSize": 4
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.tabSize": 4
+    },
+
+    "[yaml]": {
+        "editor.tabSize": 2
+    },
+    "[markdown]": {
+        "files.trimTrailingWhitespace": false
+    },
+
+    "phpstan.configFile": "phpstan.neon",
+    "phpstan.memoryLimit": "512M",
+
+    "intelephense.environment.phpVersion": "8.3.0",
+    "intelephense.telemetry.enabled": false,
+
+    "php.validate.executablePath": "php"
+}

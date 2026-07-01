@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev, "dev_*"]
+  pull_request:
+    branches: [main, dev, "dev_*"]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: visittemajuk_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: visittemajuk_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, dom, fileinfo, pdo_mysql
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Prepare Environment
+        run: |
+          cp .env.testing .env
+          php artisan key:generate
+          php artisan migrate --force --ansi
+
+      - name: Run Laravel Pint check
+        run: composer format:check
+
+      - name: Run Larastan / PHPStan
+        run: composer analyse
+
+      - name: Run Pest
+        run: composer test
+
+      - name: Run Prettier check
+        run: npm run format:check
+
+      - name: Check Composer dependencies for known vulnerabilities
+        run: composer audit

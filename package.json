@@ -1,0 +1,25 @@
+{
+    "name": "visittemajuk-backend",
+    "private": true,
+    "scripts": {
+        "prepare": "husky",
+        "format": "npm run format:docs",
+        "format:check": "npm run format:docs:check",
+        "format:docs": "prettier --write \"*.{json,md,js}\" \"scripts/**/*.mjs\" \".github/**/*.{yml,yaml,md}\"",
+        "format:docs:check": "prettier --check \"*.{json,md,js}\" \"scripts/**/*.mjs\" \".github/**/*.{yml,yaml,md}\"",
+        "lint-staged": "lint-staged"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^21.1.0",
+        "@commitlint/config-conventional": "^21.1.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.0.8",
+        "prettier": "^3.9.1"
+    },
+    "lint-staged": {
+        "*.php": "vendor/bin/pint",
+        "*.{json,md,js}": "prettier --write",
+        "scripts/**/*.mjs": "prettier --write",
+        ".github/**/*.{yml,yaml,md}": "prettier --write"
+    }
+}
