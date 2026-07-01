@@ -2,7 +2,7 @@ name: Commitlint
 
 on:
   pull_request:
-    branches: [main, dev, "dev_*"]
+    branches: [main, dev]
 
 permissions:
   contents: read
