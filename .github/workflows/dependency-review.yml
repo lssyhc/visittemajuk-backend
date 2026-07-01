@@ -2,7 +2,7 @@ name: Dependency Review
 
 on:
   pull_request:
-    branches: [main, dev, "dev_*"]
+    branches: [main, dev]
 
 permissions:
   contents: read
@@ -19,6 +19,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Review dependency changes
-        uses: actions/dependency-review-action@v3
+        uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
