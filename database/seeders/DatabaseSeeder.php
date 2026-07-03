@@ -25,5 +25,7 @@ final class DatabaseSeeder extends Seeder
                 'password' => Hash::make('temajuk2024'),
             ],
         );
+
+        $this->call(DestinationSeeder::class);
     }
 }
