@@ -6,10 +6,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Laravel\Sanctum\NewAccessToken;
 
 final class RefreshTokenController extends Controller
 {
@@ -19,7 +17,7 @@ final class RefreshTokenController extends Controller
 
         $this->revokeCurrentBearerToken($request);
 
-        $newToken = $this->createToken($user);
+        $newToken = $user->createApiToken();
 
         return $this->successResponse(
             data: [
@@ -27,15 +25,6 @@ final class RefreshTokenController extends Controller
                 'token' => $newToken->plainTextToken,
             ],
             message: 'Token berhasil diperbarui.',
-        );
-    }
-
-    private function createToken(User $user): NewAccessToken
-    {
-        return $user->createToken(
-            User::API_TOKEN_NAME,
-            User::API_TOKEN_ABILITIES,
-            now()->addMinutes((int) config('sanctum.expiration', 1440)),
         );
     }
 }

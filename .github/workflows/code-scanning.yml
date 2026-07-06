@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   semgrep:
@@ -19,6 +20,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
+      actions: read
       security-events: write
 
     steps:
