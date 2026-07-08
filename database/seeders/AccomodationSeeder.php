@@ -51,7 +51,6 @@ final class AccomodationSeeder extends Seeder
      *     contacs: string,
      *     site_url: string,
      *     facilities: list<string>,
-     *     tips: list<string>,
      *     gallery: list<string>,
      *     room_types: list<array{name: string, description: string, capacity: int, price: float}>
      * }>
@@ -81,11 +80,6 @@ final class AccomodationSeeder extends Seeder
                     'Layanan Antar-Jemput',
                     'Penyewaan Alat Snorkeling',
                     'Bar Tepi Pantai',
-                ],
-                'tips'             => [
-                    'Pesan minimal 3 hari sebelumnya karena resort sering penuh di musim liburan',
-                    'Manfaatkan paket early check-in untuk lebih lama menikmati pantai privat',
-                    'Coba menu sarapan seafood lokal yang disajikan langsung dari nelayan setempat',
                 ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -134,11 +128,6 @@ final class AccomodationSeeder extends Seeder
                     'Dapur Bersama',
                     'Ruang Santai',
                     'Laundry',
-                ],
-                'tips'             => [
-                    'Tanyakan kepada pemilik soal jadwal melaut gratis yang sering ditawarkan untuk tamu menginap',
-                    'Bawa uang tunai karena belum tersedia mesin ATM di sekitar wisma',
-                    'Kamar AC tersedia terbatas, sebaiknya pesan jauh-jauh hari',
                 ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -189,11 +178,6 @@ final class AccomodationSeeder extends Seeder
                     'Pemandu Wisata Mangrove',
                     'Hammock di Setiap Unit',
                 ],
-                'tips'             => [
-                    'Gunakan losion antinyamuk karena area mangrove cukup banyak serangga di malam hari',
-                    'Waktu terbaik mengamati burung adalah pukul 06.00–08.00 pagi',
-                    'Bawa senter sendiri karena pencahayaan di malam hari cukup redup untuk menjaga suasana alami',
-                ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/2583852/pexels-photo-2583852.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                     'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -241,11 +225,6 @@ final class AccomodationSeeder extends Seeder
                     'WiFi Gratis',
                     'Area Parkir',
                     'Sepeda Pinjaman',
-                ],
-                'tips'             => [
-                    'Pesan paket makan untuk merasakan masakan khas Melayu yang autentik dengan harga terjangkau',
-                    'Minta Pak Amin untuk mengantarkan ke spot sunrise terbaik di Temajuk',
-                    'Cocok untuk solo traveler atau pasangan yang ingin pengalaman lokal yang hangat',
                 ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -298,11 +277,6 @@ final class AccomodationSeeder extends Seeder
                     'Layanan Antar-Jemput Bandara',
                     'Concierge 24 Jam',
                 ],
-                'tips'             => [
-                    'Nikmati sunset dari teras villa, pemandangannya adalah salah satu yang terbaik di Kalimantan Barat',
-                    'Sewa villa selama minimal 2 malam untuk mendapatkan pengalaman yang lebih maksimal',
-                    'Pesan layanan private chef minimal sehari sebelumnya untuk menu makan malam spesial',
-                ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/53464/sheraton-palace-hotel-lobby-architecture-53464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                     'https://images.pexels.com/photos/2631746/pexels-photo-2631746.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -350,11 +324,6 @@ final class AccomodationSeeder extends Seeder
                     'WiFi Gratis',
                     'Toilet & Kamar Mandi Bersama',
                     'Loker Penyimpanan Barang',
-                ],
-                'tips'             => [
-                    'Coba menu ikan bakar bumbu tempoyak khas Ibu Sari yang menjadi andalan tamu',
-                    'Cocok untuk backpacker yang membutuhkan akomodasi bersih dengan budget terbatas',
-                    'Informasikan waktu kepulangan lebih awal agar dapat dibuatkan bekal perjalanan',
                 ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
@@ -405,11 +374,6 @@ final class AccomodationSeeder extends Seeder
                     'Parkir Motor & Mobil',
                     'Paket Wisata Lokal',
                     'Area BBQ',
-                ],
-                'tips'             => [
-                    'Bangun pukul 05.30 untuk menikmati matahari terbit yang memukau langsung dari teras',
-                    'Paket snorkeling tersedia dengan harga terjangkau, daftarkan diri ke resepsionis sore hari sebelumnya',
-                    'Bawa sunblock dan topi karena pantai langsung menghadap matahari tanpa naungan pepohonan',
                 ],
                 'gallery'          => [
                     'https://images.pexels.com/photos/1802255/pexels-photo-1802255.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
