@@ -28,7 +28,6 @@ final class Accomodation extends Model
         'contacs',
         'site_url',
         'facilities',
-        'tips',
         'gallery',
     ];
 
@@ -39,7 +38,6 @@ final class Accomodation extends Model
     {
         return [
             'facilities' => 'array',
-            'tips'       => 'array',
             'gallery'    => 'array',
         ];
     }

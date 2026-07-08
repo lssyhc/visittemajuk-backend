@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('contacs');
             $table->string('site_url');
             $table->json('facilities');
-            $table->json('tips');
             $table->json('gallery');
             $table->timestamps();
         });
