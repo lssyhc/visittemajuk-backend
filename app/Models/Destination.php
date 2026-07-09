@@ -15,6 +15,8 @@ final class Destination extends Model
     /**
      * @var list<string>
      */
+    protected $table = 'destinations';
+
     protected $fillable = [
         'slug',
         'title',
