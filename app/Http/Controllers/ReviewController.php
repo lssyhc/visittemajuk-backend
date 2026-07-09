@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Review\ListReviewRequest;
+use App\Http\Requests\Review\SaveReviewRequest;
+use App\Http\Resources\ReviewResource;
 use App\Models\Review;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Symfony\Component\HttpFoundation\Response;
 
 class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ListReviewRequest $request): JsonResponse
     {
-        $ulasan = Review::with('destination:id,title')
-            ->get()
-            ->makeHidden('destination_id');
+        $reviews = $this->paginatedReviews($request, searchText : true);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $ulasan,
-        ], 200);
+        return $this->successResponse(
+            data: ReviewResource::collection($reviews->getCollection()),
+            meta: $this->indexMeta($reviews),
+        );
     }
 
     /**
@@ -35,53 +39,62 @@ class ReviewController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SaveReviewRequest $request)
     {
-        $ulasan = $request->validate([
-            'name' => ['required'],
-            'text' => ['required'],
-            'destination_id' => ['required'],
-            'rating' => ['required'],
-        ]);
+        $attributes = $request->reviewAttributes();
 
-        $inserted_data = Review::create($ulasan);
+        $review = Review::query()->create($attributes);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data berhasil ditambahkan.',
-            'data' => $inserted_data,
-        ], 200);
+        return $this->successResponse(
+            data: new ReviewResource($review),
+            message: 'Review berhasil dibuat.',
+            status: Response::HTTP_CREATED,
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Review $review)
+    private function paginatedReviews(ListReviewRequest $request, bool $searchText): LengthAwarePaginator
     {
-        //
+        $query = Review::query();
+        $search = $request->search();
+        $destination = (int) $request->destination();
+        $rate = (int) $request->rate();
+
+        if ($search !== null) {
+            $query->where(function (Builder $query) use ($search, $searchText): void {
+                $query->where('name', 'like', '%'.$search.'%');
+
+                if ($searchText) {
+                    $query->orWhere('text', 'like', '%'.$search.'%');
+                }
+            });
+        }
+
+        if ($destination !== 0) {
+            $query->where('destination_id', $destination);
+        }
+
+        if ($rate !== 0) {
+            $query->where('rating', $rate);
+        }
+
+        return $query
+            ->orderBy('id')
+            ->with('destination:id,title')
+            ->paginate($request->perPage())
+            ->withQueryString();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Review $review)
+    private function indexMeta(LengthAwarePaginator $reviews): array
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Review $review)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Review $review)
-    {
-        //
+        return [
+            'pagination' => [
+                'current_page' => $reviews->currentPage(),
+                'per_page' => $reviews->perPage(),
+                'last_page' => $reviews->lastPage(),
+                'total' => $reviews->total(),
+                'from' => $reviews->firstItem(),
+                'to' => $reviews->lastItem(),
+            ],
+        ];
     }
 }

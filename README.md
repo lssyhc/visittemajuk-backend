@@ -49,14 +49,14 @@ The `composer setup` script can run the Laravel setup sequence for a fresh local
 
 `.env.example` is the local development template. Important defaults:
 
-| Variable          | Default                 | Purpose                                  |
-| ----------------- | ----------------------- | ---------------------------------------- |
-| `APP_NAME`        | `Visit Temajuk`         | Application display name                 |
-| `APP_LOCALE`      | `id`                    | Indonesian localization                  |
-| `DB_CONNECTION`   | `mysql`                 | Default database driver                  |
-| `DB_DATABASE`     | `visittemajuk`          | Local development database name          |
-| `FILESYSTEM_DISK` | `public`                | Public media storage for tourism content |
-| `FRONTEND_URL`    | `http://localhost:3000` | React frontend origin for CORS           |
+| Variable          | Default                                       | Purpose                                         |
+| ----------------- | --------------------------------------------- | ----------------------------------------------- |
+| `APP_NAME`        | `Visit Temajuk`                               | Application display name                        |
+| `APP_LOCALE`      | `id`                                          | Indonesian localization                         |
+| `DB_CONNECTION`   | `mysql`                                       | Default database driver                         |
+| `DB_DATABASE`     | `visittemajuk`                                | Local development database name                 |
+| `FILESYSTEM_DISK` | `public`                                      | Public media storage for tourism content        |
+| `FRONTEND_URLS`   | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated React frontend origins for CORS |
 
 Never commit real `.env` files, credentials, API keys, production database dumps, or deployment secrets.
 

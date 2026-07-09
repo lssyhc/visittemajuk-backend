@@ -10,7 +10,6 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\NewAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 final class LoginController extends Controller
@@ -35,7 +34,7 @@ final class LoginController extends Controller
             return $this->invalidCredentialsResponse();
         }
 
-        $token = $this->createToken($user);
+        $token = $user->createApiToken();
 
         return $this->successResponse(
             data: [
@@ -51,15 +50,6 @@ final class LoginController extends Controller
         return $this->errorResponse(
             message: 'Username atau password salah.',
             status: Response::HTTP_UNAUTHORIZED,
-        );
-    }
-
-    private function createToken(User $user): NewAccessToken
-    {
-        return $user->createToken(
-            User::API_TOKEN_NAME,
-            User::API_TOKEN_ABILITIES,
-            now()->addMinutes((int) config('sanctum.expiration', 1440)),
         );
     }
 }

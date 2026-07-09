@@ -4,118 +4,143 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Culinary\ListCulinaryRequest;
+use App\Http\Requests\Culinary\SaveCulinaryRequest;
+use App\Http\Resources\CulinaryResource;
 use App\Models\Culinary;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class CulinaryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ListCulinaryRequest $request): JsonResponse
     {
-        $culinary = Culinary::with('specialties:id,menu,culinary_id', 'culinaryGalleries:id,image,culinary_id')->get();
+        $culinaries = $this->paginatedCulinaries($request, searchDescription: true);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinary,
-        ], 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return $this->successResponse(
+            data: CulinaryResource::collection($culinaries->getCollection()),
+            meta: $this->indexMeta($culinaries),
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SaveCulinaryRequest $request): JsonResponse
     {
-        $culinary = $request->validate([
-            'title' => ['required'],
-            'description' => ['required'],
-            'full_description' => ['required'],
-            'category' => ['required'],
-            'price' => ['required'],
-            'location' => ['required'],
-            'open_hours' => ['required'],
-            'contact' => ['required'],
-        ]);
 
-        if ($request->location_map) {
-            $culinary['location_map'] = $request->location_map;
+        $attributes = $request->culinaryAttributes();
+
+        if ($request->hasFile('image')) {
+            $attributes['image'] = $request->file('image')->store('culinaries', 'public');
         }
 
-        if ($request->file('image')) {
-            $culinary['image'] = $request->file('image')->store('culinaries', 'public');
-        }
+        $culinary = Culinary::query()->create($attributes);
 
-        $addCulinary = Culinary::create($culinary);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $addCulinary,
-        ], 200);
+        return $this->successResponse(
+            data: new CulinaryResource($culinary),
+            message: 'Kuliner berhasil dibuat.',
+            status: Response::HTTP_CREATED,
+        );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Culinary $culinary): JsonResponse
     {
-        $culinary = Culinary::where('id', $id)->with('specialties:id,menu,culinary_id', 'culinaryGalleries:id,image,culinary_id')->get()[0];
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinary,
-        ], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Culinary $culinary)
-    {
-        //
+        return $this->successResponse(
+            data: new CulinaryResource($culinary),
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(SaveCulinaryRequest $request, Culinary $culinary): JsonResponse
     {
-        $culinary = Culinary::findOrFail($id);
-        $updateCulinaryData = $request->all();
+        $updateCulinary = Culinary::findOrFail($culinary->id);
+        $updateCulinaryData = $request->culinaryAttributes();
 
-        if ($request->file('image') && $culinary['image'] != $request->file('image')) {
-            Storage::disk('public')->delete($culinary['image']);
+        if ($request->hasFile('image') && $updateCulinary['image'] != $request->image) {
+            Storage::disk('public')->delete($updateCulinary['image']);
             $updateCulinaryData['image'] = $request->file('image')->store('culinaries', 'public');
         }
-        $culinary->update($updateCulinaryData);
+        $updateCulinary->update($updateCulinaryData);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinary,
-        ], 200);
+        return $this->successResponse(
+            data: new CulinaryResource($culinary->refresh()),
+            message: 'Kuliner berhasil diperbarui.',
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Culinary $culinary): JsonResponse
     {
-        $culinary = Culinary::find($id);
-        Storage::disk('public')->delete($culinary['image']);
-        $culinary->delete();
+        $deleteCulinary = Culinary::find($culinary->id);
+        Storage::disk('public')->delete($deleteCulinary['image']);
+        $deleteCulinary->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => null,
-        ], 204);
+        return $this->successResponse(
+            message: 'Kuliner berhasil dihapus.',
+        );
+    }
+
+    private function paginatedCulinaries(ListCulinaryRequest $request, bool $searchDescription): LengthAwarePaginator
+    {
+        $query = Culinary::query();
+        $search = $request->search();
+        $category = $request->category();
+
+        if ($search !== null) {
+            $query->where(function (Builder $query) use ($search, $searchDescription): void {
+                $query->where('title', 'like', '%'.$search.'%');
+
+                if ($searchDescription) {
+                    $query->orWhere('description', 'like', '%'.$search.'%');
+                }
+            });
+        }
+
+        if ($category !== null) {
+            $query->where('category', $category);
+        }
+
+        return $query
+            ->orderBy('id')
+            ->with('specialties:id,menu,culinary_id', 'culinaryGalleries:id,image,culinary_id')
+            ->paginate($request->perPage())
+            ->withQueryString();
+    }
+
+    private function indexMeta(LengthAwarePaginator $culinary): array
+    {
+        return [
+            'pagination' => [
+                'current_page' => $culinary->currentPage(),
+                'per_page' => $culinary->perPage(),
+                'last_page' => $culinary->lastPage(),
+                'total' => $culinary->total(),
+                'from' => $culinary->firstItem(),
+                'to' => $culinary->lastItem(),
+            ],
+            'filters' => [
+                'categories' => Culinary::query()
+                    ->select('category')
+                    ->distinct()
+                    ->orderBy('category')
+                    ->pluck('category')
+                    ->values()
+                    ->all(),
+            ],
+        ];
     }
 }

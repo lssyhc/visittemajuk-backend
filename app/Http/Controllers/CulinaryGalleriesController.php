@@ -4,87 +4,78 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CulinaryGalleries\SaveCulinaryGalleriesRequest;
+use App\Http\Resources\CulinaryGalleriesResource;
 use App\Models\CulinaryGalleries;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class CulinaryGalleriesController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SaveCulinaryGalleriesRequest $request): JsonResponse
     {
-        $culinaryGalleries = $request->validate([
-            'culinary_id' => ['required'],
-        ]);
+        $culinaryGalleries = $request->culinaryGalleriesAttributes();
         $culinaryGalleries['image'] = $request->file('image')->store('culinaries/galleries', 'public');
 
-        CulinaryGalleries::create($culinaryGalleries);
+        $culinary = CulinaryGalleries::query()->create($culinaryGalleries);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinaryGalleries,
-        ], 200);
+        return $this->successResponse(
+            data: new CulinaryGalleriesResource($culinary),
+            message: 'Galeri kuliner berhasil dibuat.',
+            status: Response::HTTP_CREATED,
+        );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(CulinaryGalleries $culinaryGalleries): JsonResponse
     {
-        $culinaryGalleries = CulinaryGalleries::where('culinary_id', $id)->get();
+        $culinaryGalleries = CulinaryGalleries::where('culinary_id', $culinaryGalleries->id)->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinaryGalleries,
-        ], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CulinaryGalleries $culinaryGalleries)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, CulinaryGalleries $culinaryGalleries)
-    {
-        //
+        return $this->successResponse(
+            data: CulinaryGalleriesResource::collection($culinaryGalleries),
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(CulinaryGalleries $culinaryGalleries)
     {
-        $culinaryGalleries = CulinaryGalleries::find($id);
+        $culinaryGalleries = CulinaryGalleries::find($culinaryGalleries->id);
         Storage::disk('public')->delete($culinaryGalleries['image']);
         $culinaryGalleries->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => null,
-        ], 204);
+        return $this->successResponse(
+            message: 'Galeri kuliner berhasil dihapus.'
+        );
+    }
+
+    private function indexMeta(LengthAwarePaginator $destinations): array
+    {
+        return [
+            'pagination' => [
+                'current_page' => $destinations->currentPage(),
+                'per_page' => $destinations->perPage(),
+                'last_page' => $destinations->lastPage(),
+                'total' => $destinations->total(),
+                'from' => $destinations->firstItem(),
+                'to' => $destinations->lastItem(),
+            ],
+            'filters' => [
+                'categories' => Destination::query()
+                    ->select('category')
+                    ->distinct()
+                    ->orderBy('category')
+                    ->pluck('category')
+                    ->values()
+                    ->all(),
+            ],
+        ];
     }
 }

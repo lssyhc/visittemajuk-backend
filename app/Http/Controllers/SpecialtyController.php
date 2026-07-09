@@ -4,53 +4,40 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Specialty\SaveSpecialtyRequest;
+use App\Http\Resources\SpecialtyResource;
 use App\Models\Specialty;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class SpecialtyController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index() {}
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SaveSpecialtyRequest $request): JsonResponse
     {
-        $culinarySpecialty = $request->validate([
-            'menu' => ['required'],
-            'culinary_id' => ['required'],
-        ]);
+        $specialty = $request->specialtyAttributes();
 
-        $addCulinarySpecialty = Specialty::create($culinarySpecialty);
+        $addCulinarySpecialty = Specialty::query()->create($specialty);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinarySpecialty,
-        ], 200);
+        return $this->successResponse(
+            data: new SpecialtyResource($addCulinarySpecialty),
+            message: 'Spesialisasi berhasil dibuat.',
+            status: Response::HTTP_CREATED,
+        );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Specialty $specialty): JsonResponse
     {
-        $culinarySpecialties = Specialty::where('culinary_id', $id)->get();
+        $showCulinarySpecialties = Specialty::where('culinary_id', $specialty->id)->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $culinarySpecialties,
-        ], 200);
+        return $this->successResponse(
+            data: SpecialtyResource::collection($showCulinarySpecialties),
+        );
     }
 
     /**
@@ -64,28 +51,25 @@ class SpecialtyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(SaveSpecialtyRequest $request, Specialty $specialty)
     {
-        $specialty = Specialty::findOrFail($id);
-        $specialtyData = $request->all();
-        $specialty->update($specialtyData);
+        $specialty->update($request->specialtyAttributes());
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $specialty,
-        ], 200);
+        return $this->successResponse(
+            data: new SpecialtyResource($specialty->refresh()),
+            message: 'Data Spesialisasi berhasil diperbarui.'
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Specialty $specialty)
     {
-        $culinarySpecialties = Specialty::destroy($id);
+        $specialty->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => null,
-        ], 204);
+        return $this->successResponse(
+            message: 'Spesialisasi berhasil dihapus.',
+        );
     }
 }

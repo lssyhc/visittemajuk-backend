@@ -19,26 +19,32 @@ Route::prefix('auth')->as('auth.')->group(function () {
     Route::post('/refresh', RefreshTokenController::class)->middleware(['auth:sanctum', 'ability:api:access'])->name('refresh');
 });
 
+Route::prefix('admin')->as('admin.')->group(function () {
+    Route::get('/destinations', [DestinationController::class, 'adminIndex'])->name('destinations.index');
+    Route::post('/destinations', [DestinationController::class, 'store'])->name('destinations.store');
+    Route::put('/destinations/{destination:slug}', [DestinationController::class, 'update'])->name('destinations.update');
+    Route::delete('/destinations/{destination:slug}', [DestinationController::class, 'destroy'])->name('destinations.destroy');
+});
+
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::get('/user', [UserController::class, 'show'])->name('user.show');
 
-    Route::post('/culinary', [CulinaryController::class, 'store']);
-    Route::post('/culinary/{id}', [CulinaryController::class, 'update']);
-    Route::delete('/culinary/{id}', [CulinaryController::class, 'destroy']);
+    Route::post('/culinaries', [CulinaryController::class, 'store']);
+    Route::post('/culinaries/{culinary:id}', [CulinaryController::class, 'update']);
+    Route::delete('/culinaries/{culinary:id}', [CulinaryController::class, 'destroy']);
 
-    Route::post('/specialty', [SpecialtyController::class, 'store']);
-    Route::put('/specialty/{id}', [SpecialtyController::class, 'update']);
-    Route::delete('/specialty/{id}', [SpecialtyController::class, 'destroy']);
+    Route::post('/specialties', [SpecialtyController::class, 'store']);
+    Route::put('/specialties/{specialty:id}', [SpecialtyController::class, 'update']);
+    Route::delete('/specialties/{specialty:id}', [SpecialtyController::class, 'destroy']);
 
     Route::post('/culinaryGalleries', [CulinaryGalleriesController::class, 'store']);
-    Route::delete('/culinaryGalleries/{id}', [CulinaryGalleriesController::class, 'destroy']);
+    Route::delete('/culinaryGalleries/{culinaryGalleries:id}', [CulinaryGalleriesController::class, 'destroy']);
 
 });
 
-Route::get('/culinary', [CulinaryController::class, 'index']);
-Route::get('/culinary/{id}', [CulinaryController::class, 'show']);
-Route::get('/specialty/{id}', [SpecialtyController::class, 'show']);
-Route::get('/culinaryGalleries/{id}', [CulinaryGalleriesController::class, 'show']);
-Route::get('/review', [ReviewController::class, 'index']);
-Route::post('/review', [ReviewController::class, 'store']);
-Route::get('/destination', [DestinationController::class, 'index']);
+Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
+Route::get('/destinations/{destination:slug}', [DestinationController::class, 'show'])->name('destinations.show');
+Route::get('/culinaries', [CulinaryController::class, 'index']);
+Route::get('/culinaries/{culinary:id}', [CulinaryController::class, 'show']);
+Route::get('/reviews', [ReviewController::class, 'index']);
+Route::post('/reviews', [ReviewController::class, 'store']);
