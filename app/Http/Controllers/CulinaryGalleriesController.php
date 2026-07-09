@@ -55,27 +55,4 @@ class CulinaryGalleriesController extends Controller
             message: 'Galeri kuliner berhasil dihapus.'
         );
     }
-
-    private function indexMeta(LengthAwarePaginator $destinations): array
-    {
-        return [
-            'pagination' => [
-                'current_page' => $destinations->currentPage(),
-                'per_page' => $destinations->perPage(),
-                'last_page' => $destinations->lastPage(),
-                'total' => $destinations->total(),
-                'from' => $destinations->firstItem(),
-                'to' => $destinations->lastItem(),
-            ],
-            'filters' => [
-                'categories' => Destination::query()
-                    ->select('category')
-                    ->distinct()
-                    ->orderBy('category')
-                    ->pluck('category')
-                    ->values()
-                    ->all(),
-            ],
-        ];
-    }
 }
