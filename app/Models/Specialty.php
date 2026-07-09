@@ -7,9 +7,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Specialty extends Model
+final class Specialty extends Model
 {
-    protected $table = 'Specialties';
+    protected $table = 'specialties';
 
     protected $fillable = [
         'menu',

@@ -19,12 +19,14 @@ Route::prefix('auth')->as('auth.')->group(function () {
     Route::post('/refresh', RefreshTokenController::class)->middleware(['auth:sanctum', 'ability:api:access'])->name('refresh');
 });
 
-Route::prefix('admin')->as('admin.')->group(function () {
-    Route::get('/destinations', [DestinationController::class, 'adminIndex'])->name('destinations.index');
-    Route::post('/destinations', [DestinationController::class, 'store'])->name('destinations.store');
-    Route::put('/destinations/{destination:slug}', [DestinationController::class, 'update'])->name('destinations.update');
-    Route::delete('/destinations/{destination:slug}', [DestinationController::class, 'destroy'])->name('destinations.destroy');
-});
+Route::prefix('admin')->as('admin.')
+    ->middleware(['auth:sanctum', 'ability:api:access'])
+    ->group(function () {
+        Route::get('/destinations', [DestinationController::class, 'adminIndex'])->name('destinations.index');
+        Route::post('/destinations', [DestinationController::class, 'store'])->name('destinations.store');
+        Route::put('/destinations/{destination:slug}', [DestinationController::class, 'update'])->name('destinations.update');
+        Route::delete('/destinations/{destination:slug}', [DestinationController::class, 'destroy'])->name('destinations.destroy');
+    });
 
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::get('/user', [UserController::class, 'show'])->name('user.show');

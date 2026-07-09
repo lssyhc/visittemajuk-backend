@@ -7,9 +7,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Culinary extends Model
+final class Culinary extends Model
 {
-    protected $table = 'Culinaries';
+    protected $table = 'culinaries';
 
     protected $fillable = [
         'title',

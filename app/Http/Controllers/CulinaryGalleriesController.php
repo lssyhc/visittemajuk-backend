@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
-class CulinaryGalleriesController extends Controller
+final class CulinaryGalleriesController extends Controller
 {
     /**
      * Store a newly created resource in storage.

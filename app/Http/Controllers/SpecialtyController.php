@@ -10,7 +10,7 @@ use App\Models\Specialty;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class SpecialtyController extends Controller
+final class SpecialtyController extends Controller
 {
     /**
      * Store a newly created resource in storage.

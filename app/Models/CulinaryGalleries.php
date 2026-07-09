@@ -7,7 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CulinaryGalleries extends Model
+final class CulinaryGalleries extends Model
 {
     protected $table = 'culinarygalleries';
 

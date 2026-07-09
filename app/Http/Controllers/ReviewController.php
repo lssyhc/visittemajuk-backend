@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\Response;
 
-class ReviewController extends Controller
+final class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
