@@ -71,7 +71,7 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "DB_DATABASE=visittemajuk_test php artisan test"
         ],
         "migrate:dev": [
             "@php artisan migrate"
