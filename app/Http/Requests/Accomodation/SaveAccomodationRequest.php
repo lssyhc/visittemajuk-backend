@@ -16,39 +16,39 @@ final class SaveAccomodationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'            => ['required', 'string', 'max:255'],
-            'description'      => ['required', 'string'],
-            'fullDescription'  => ['required', 'string'],
-            'imageUrl'         => ['required', 'string', 'url', 'max:2048'],
-            'category'         => ['required', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
-            'minPrice'         => ['required', 'string', 'max:255'],
-            'maxPrice'         => ['required', 'string', 'max:255'],
-            'location'         => ['required', 'string'],
-            'contacs'          => ['required', 'string', 'max:255'],
-            'siteUrl'          => ['required', 'string', 'url', 'max:2048'],
-            'facilities'       => ['present', 'array'],
-            'facilities.*'     => ['required', 'string', 'max:255'],
-            'gallery'          => ['present', 'array'],
-            'gallery.*'        => ['required', 'string', 'url', 'max:2048'],
-            'roomTypes'        => ['present', 'array'],
-            'roomTypes.*.name'        => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'fullDescription' => ['required', 'string'],
+            'imageUrl' => ['required', 'string', 'url', 'max:2048'],
+            'category' => ['required', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
+            'minPrice' => ['required', 'string', 'max:255'],
+            'maxPrice' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string'],
+            'contacs' => ['required', 'string', 'max:255'],
+            'siteUrl' => ['required', 'string', 'url', 'max:2048'],
+            'facilities' => ['present', 'array'],
+            'facilities.*' => ['required', 'string', 'max:255'],
+            'gallery' => ['present', 'array'],
+            'gallery.*' => ['required', 'string', 'url', 'max:2048'],
+            'roomTypes' => ['present', 'array'],
+            'roomTypes.*.name' => ['required', 'string', 'max:255'],
             'roomTypes.*.description' => ['required', 'string'],
-            'roomTypes.*.capacity'    => ['required', 'integer', 'min:1'],
-            'roomTypes.*.price'       => ['required', 'numeric', 'min:0'],
+            'roomTypes.*.capacity' => ['required', 'integer', 'min:1'],
+            'roomTypes.*.price' => ['required', 'numeric', 'min:0'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'category.in'              => 'Kategori harus salah satu dari: resort, wisma, bungalow, homestay, villa.',
-            'imageUrl.url'             => 'URL gambar utama harus berupa URL yang valid.',
-            'siteUrl.url'              => 'URL website harus berupa URL yang valid.',
-            'gallery.*.url'            => 'Setiap URL galeri harus berupa URL yang valid.',
-            'roomTypes.*.name.required'        => 'Nama tipe kamar wajib diisi.',
+            'category.in' => 'Kategori harus salah satu dari: resort, wisma, bungalow, homestay, villa.',
+            'imageUrl.url' => 'URL gambar utama harus berupa URL yang valid.',
+            'siteUrl.url' => 'URL website harus berupa URL yang valid.',
+            'gallery.*.url' => 'Setiap URL galeri harus berupa URL yang valid.',
+            'roomTypes.*.name.required' => 'Nama tipe kamar wajib diisi.',
             'roomTypes.*.description.required' => 'Deskripsi tipe kamar wajib diisi.',
-            'roomTypes.*.capacity.integer'     => 'Kapasitas tipe kamar harus berupa angka bulat.',
-            'roomTypes.*.price.numeric'        => 'Harga tipe kamar harus berupa angka.',
+            'roomTypes.*.capacity.integer' => 'Kapasitas tipe kamar harus berupa angka bulat.',
+            'roomTypes.*.price.numeric' => 'Harga tipe kamar harus berupa angka.',
         ];
     }
 
@@ -73,18 +73,18 @@ final class SaveAccomodationRequest extends FormRequest
         $validated = $this->validated();
 
         return [
-            'title'            => (string) $validated['title'],
-            'description'      => (string) $validated['description'],
+            'title' => (string) $validated['title'],
+            'description' => (string) $validated['description'],
             'full_description' => (string) $validated['fullDescription'],
-            'image_url'        => (string) $validated['imageUrl'],
-            'category'         => (string) $validated['category'],
-            'min_price'        => (string) $validated['minPrice'],
-            'max_price'        => (string) $validated['maxPrice'],
-            'location'         => (string) $validated['location'],
-            'contacs'          => (string) $validated['contacs'],
-            'site_url'         => (string) $validated['siteUrl'],
-            'facilities'       => array_values($validated['facilities']),
-            'gallery'          => array_values($validated['gallery']),
+            'image_url' => (string) $validated['imageUrl'],
+            'category' => (string) $validated['category'],
+            'min_price' => (string) $validated['minPrice'],
+            'max_price' => (string) $validated['maxPrice'],
+            'location' => (string) $validated['location'],
+            'contacs' => (string) $validated['contacs'],
+            'site_url' => (string) $validated['siteUrl'],
+            'facilities' => array_values($validated['facilities']),
+            'gallery' => array_values($validated['gallery']),
         ];
     }
 
@@ -97,10 +97,10 @@ final class SaveAccomodationRequest extends FormRequest
 
         return array_values(array_map(
             static fn (array $rt): array => [
-                'name'        => (string) $rt['name'],
+                'name' => (string) $rt['name'],
                 'description' => (string) $rt['description'],
-                'capacity'    => (int) $rt['capacity'],
-                'price'       => (float) $rt['price'],
+                'capacity' => (int) $rt['capacity'],
+                'price' => (float) $rt['price'],
             ],
             $validated['roomTypes'],
         ));

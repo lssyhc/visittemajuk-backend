@@ -30,7 +30,7 @@ final class RoomType extends Model
     {
         return [
             'capacity' => 'integer',
-            'price'    => 'decimal:2',
+            'price' => 'decimal:2',
         ];
     }
 

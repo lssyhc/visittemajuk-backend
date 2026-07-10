@@ -20,9 +20,9 @@ final class ListAccomodationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search'   => ['nullable', 'string', 'max:255'],
+            'search' => ['nullable', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
-            'page'     => ['nullable', 'integer', 'min:1'],
+            'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_PER_PAGE],
         ];
     }

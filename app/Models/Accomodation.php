@@ -38,7 +38,7 @@ final class Accomodation extends Model
     {
         return [
             'facilities' => 'array',
-            'gallery'    => 'array',
+            'gallery' => 'array',
         ];
     }
 
