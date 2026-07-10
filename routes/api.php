@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AccomodationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RefreshTokenController;
@@ -26,6 +27,11 @@ Route::prefix('admin')->as('admin.')
         Route::post('/destinations', [DestinationController::class, 'store'])->name('destinations.store');
         Route::put('/destinations/{destination:slug}', [DestinationController::class, 'update'])->name('destinations.update');
         Route::delete('/destinations/{destination:slug}', [DestinationController::class, 'destroy'])->name('destinations.destroy');
+
+        Route::get('/accomodations', [AccomodationController::class, 'adminIndex'])->name('accomodations.index');
+        Route::post('/accomodations', [AccomodationController::class, 'store'])->name('accomodations.store');
+        Route::put('/accomodations/{accomodation:slug}', [AccomodationController::class, 'update'])->name('accomodations.update');
+        Route::delete('/accomodations/{accomodation:slug}', [AccomodationController::class, 'destroy'])->name('accomodations.destroy');
     });
 
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
@@ -50,3 +56,5 @@ Route::get('/culinaries', [CulinaryController::class, 'index']);
 Route::get('/culinaries/{culinary:id}', [CulinaryController::class, 'show']);
 Route::get('/reviews', [ReviewController::class, 'index']);
 Route::post('/reviews', [ReviewController::class, 'store']);
+Route::get('/accomodations', [AccomodationController::class, 'index'])->name('accomodations.index');
+Route::get('/accomodations/{accomodation:slug}', [AccomodationController::class, 'show'])->name('accomodations.show');
