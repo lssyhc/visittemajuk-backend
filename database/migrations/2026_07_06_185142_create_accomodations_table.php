@@ -21,11 +21,11 @@ return new class extends Migration
             $table->longText('full_description');
             $table->string('image_url', 2048);
             $table->string('category');
-            $table->string('min_price');
-            $table->string('max_price');
+            $table->integer('min_price')->unsigned();
+            $table->integer('max_price')->unsigned();
             $table->text('location');
             $table->string('contacs');
-            $table->string('site_url');
+            $table->string('site_url')->nullable();
             $table->json('facilities');
             $table->json('gallery');
             $table->timestamps();
