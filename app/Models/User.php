@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\NewAccessToken;
 
 final class User extends Authenticatable
 {
@@ -51,5 +52,14 @@ final class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function createApiToken(): NewAccessToken
+    {
+        return $this->createToken(
+            self::API_TOKEN_NAME,
+            self::API_TOKEN_ABILITIES,
+            now()->addMinutes((int) config('sanctum.expiration', 1440)),
+        );
     }
 }

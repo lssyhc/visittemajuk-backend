@@ -8,7 +8,6 @@ use App\Http\Requests\Accomodation\ListAccomodationRequest;
 use App\Http\Requests\Accomodation\SaveAccomodationRequest;
 use App\Http\Resources\AccomodationResource;
 use App\Models\Accomodation;
-use App\Models\RoomType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -121,7 +120,7 @@ final class AccomodationController extends Controller
     /**
      * Sync room types: delete removed entries and upsert the rest.
      *
-     * @param list<array{name: string, description: string, capacity: int, price: float}> $roomTypes
+     * @param  list<array{name: string, description: string, capacity: int, price: float}>  $roomTypes
      */
     private function syncRoomTypes(Accomodation $accomodation, array $roomTypes): void
     {
@@ -158,11 +157,11 @@ final class AccomodationController extends Controller
         return [
             'pagination' => [
                 'current_page' => $accomodations->currentPage(),
-                'per_page'     => $accomodations->perPage(),
-                'last_page'    => $accomodations->lastPage(),
-                'total'        => $accomodations->total(),
-                'from'         => $accomodations->firstItem(),
-                'to'           => $accomodations->lastItem(),
+                'per_page' => $accomodations->perPage(),
+                'last_page' => $accomodations->lastPage(),
+                'total' => $accomodations->total(),
+                'from' => $accomodations->firstItem(),
+                'to' => $accomodations->lastItem(),
             ],
             'filters' => [
                 'categories' => Accomodation::query()
