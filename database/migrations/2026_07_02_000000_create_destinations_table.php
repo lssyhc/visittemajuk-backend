@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accomodations', function (Blueprint $table) {
+        Schema::create('destinations', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
             $table->string('title');
@@ -21,12 +21,12 @@ return new class extends Migration
             $table->longText('full_description');
             $table->string('image_url', 2048);
             $table->string('category');
-            $table->string('min_price');
-            $table->string('max_price');
+            $table->string('price');
             $table->text('location');
-            $table->string('contacs');
-            $table->string('site_url');
+            $table->string('open_hours');
             $table->json('facilities');
+            $table->json('activities');
+            $table->json('tips');
             $table->json('gallery');
             $table->timestamps();
         });
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accomodations');
+        Schema::dropIfExists('destinations');
     }
 };

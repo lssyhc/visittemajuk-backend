@@ -20,11 +20,11 @@ final class RoomTypeResource extends JsonResource
         }
 
         return [
-            'id'          => $roomType->id,
-            'name'        => $roomType->name,
+            'id' => $roomType->id,
+            'name' => $roomType->name,
             'description' => $roomType->description,
-            'capacity'    => $roomType->capacity,
-            'price'       => $roomType->price,
+            'capacity' => $roomType->capacity,
+            'price' => $roomType->price,
         ];
     }
 }

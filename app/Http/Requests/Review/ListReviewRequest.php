@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Accomodation;
+namespace App\Http\Requests\Review;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class ListAccomodationRequest extends FormRequest
+final class ListReviewRequest extends FormRequest
 {
     private const int DEFAULT_PER_PAGE = 9;
 
@@ -21,7 +21,8 @@ final class ListAccomodationRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
+            'destination' => ['nullable', 'integer', 'max:255'],
+            'rate' => ['nullable', 'integer'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_PER_PAGE],
         ];
@@ -40,17 +41,26 @@ final class ListAccomodationRequest extends FormRequest
         return $value === '' ? null : $value;
     }
 
-    public function category(): ?string
+    public function destination(): int
     {
-        $value = $this->validated('category');
+        $value = $this->validated('destination');
 
-        if (! is_string($value)) {
-            return null;
+        if (! is_numeric($value)) {
+            return 0;
         }
 
-        $value = trim($value);
+        return (int) $value;
+    }
 
-        return $value === '' ? null : $value;
+    public function rate(): int
+    {
+        $value = $this->validated('rate');
+
+        if (! is_numeric($value)) {
+            return 0;
+        }
+
+        return (int) $value;
     }
 
     public function perPage(): int

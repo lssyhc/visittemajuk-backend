@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Accomodation;
+namespace App\Http\Requests\Destination;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class ListAccomodationRequest extends FormRequest
+final class ListDestinationRequest extends FormRequest
 {
     private const int DEFAULT_PER_PAGE = 9;
 
@@ -21,7 +21,7 @@ final class ListAccomodationRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
+            'category' => ['nullable', 'string', 'max:255'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_PER_PAGE],
         ];
