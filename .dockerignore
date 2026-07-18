@@ -1,0 +1,56 @@
+# Reduce build context size and keep secrets out of the image.
+# Reference: https://docs.docker.com/build/concepts/context/#dockerignore-files
+.git
+.github
+.gitattributes
+.gitignore
+.idea
+.vscode
+.worktrees
+.husky/_
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+!.env.testing
+!.env.testing.example
+auth.json
+Homestead.json
+Homestead.yaml
+
+# Build artefacts and dependencies
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+storage/framework/phpstan
+storage/logs
+storage/pail
+storage/*.key
+
+# IDE scratch files
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+.phpunit.result.cache
+.phpunit.cache
+.phpactor.json
+
+# Test output
+/coverage
+/.nyc_output
+
+# Documentation build output
+docs/_build

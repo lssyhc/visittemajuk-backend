@@ -1,20 +1,3 @@
-*.log
-.DS_Store
-.env
-.env.test
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode/*
-!/.vscode/settings.json
-!/.vscode/extensions.json
-/.zed
-/auth.json
 /node_modules
 /public/build
 /public/hot
@@ -26,6 +9,53 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
+# Env files: keep .env.example committed, ignore everything else
+.env
+.env.backup
+.env.production
+.env.local
+.env.*.local
+.env.testing
+
+# IDE and editor state
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.phpunit.result.cache
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/extensions.json
+/.zed
+.phpactor.json
+
+# Laravel IDE Helper generated files
 _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
+
+# Auth token cached by Laravel's auth prompts
+auth.json
+
+# OS noise
+.DS_Store
+
+# Logs
+*.log
+
+# PHPStan scratch directory
+/storage/framework/phpstan
+
+# Locally installed Composer and PHPStan binaries
+composer.phar
+phpstan.phar
+phpstan-baseline.neon.bak
+
+# Test coverage reports and CI artefacts
+/coverage
+/.nyc_output
+/junit.xml
+/test-results
+
+# Docker build cache
+.docker-build-cache
