@@ -39,7 +39,6 @@ RUN apt-get update \
         default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# PHP extensions Laravel 13 and PHPStan need.
 RUN docker-php-ext-install -j"$(nproc)" \
         bcmath \
         intl \
@@ -66,7 +65,6 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 
 WORKDIR /workspace
 
-# Copy lockfiles first so this layer is cached when source changes.
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
@@ -75,15 +73,12 @@ RUN npm ci --no-audit --no-fund
 
 COPY . .
 
-# Now install with scripts, since vendor and node_modules are in place.
 RUN composer install --no-interaction --no-progress --prefer-dist \
     && npm run prepare || true
 
 RUN mkdir -p storage/framework/{cache,sessions,views} \
     && chown -R www-data:www-data storage bootstrap/cache || true
 
-# Copy the entrypoint explicitly and ensure it is executable.
-# COPY . . alone preserves the git +x bit, which is fragile; this makes it deterministic.
 COPY docker/entrypoint.sh ./docker/entrypoint.sh
 RUN chmod +x ./docker/entrypoint.sh
 
