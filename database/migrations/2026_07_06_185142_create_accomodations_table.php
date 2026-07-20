@@ -19,15 +19,15 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->longText('full_description');
-            $table->string('image_url', 2048);
+            $table->string('image');
             $table->string('category');
             $table->integer('min_price')->unsigned();
             $table->integer('max_price')->unsigned();
             $table->text('location');
+            $table->string('location_map', 512)->nullable();
             $table->string('contacs');
             $table->string('site_url')->nullable();
             $table->json('facilities');
-            $table->json('gallery');
             $table->timestamps();
         });
     }

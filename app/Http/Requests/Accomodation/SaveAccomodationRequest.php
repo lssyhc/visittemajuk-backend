@@ -15,21 +15,22 @@ final class SaveAccomodationRequest extends FormRequest
 
     public function rules(): array
     {
+        $image = $this->hasFile('image') ? 'required|image|mimes:jpg,jpeg,webp|max:1024' : 'required|string|max:255';
+
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'fullDescription' => ['required', 'string'],
-            'imageUrl' => ['required', 'string', 'url', 'max:2048'],
+            'image' => $image,
             'category' => ['required', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
             'minPrice' => ['required', 'numeric', 'min:0'],
             'maxPrice' => ['required', 'numeric', 'min:0'],
             'location' => ['required', 'string'],
+            'location_map' => ['nullable', 'string', 'max:512'],
             'contacs' => ['required', 'string', 'max:255'],
             'siteUrl' => ['nullable', 'string', 'url', 'max:2048'],
             'facilities' => ['present', 'array'],
             'facilities.*' => ['required', 'string', 'max:255'],
-            'gallery' => ['present', 'array'],
-            'gallery.*' => ['required', 'string', 'url', 'max:2048'],
             'roomTypes' => ['present', 'array'],
             'roomTypes.*.name' => ['required', 'string', 'max:255'],
             'roomTypes.*.description' => ['required', 'string'],
@@ -42,9 +43,7 @@ final class SaveAccomodationRequest extends FormRequest
     {
         return [
             'category.in' => 'Kategori harus salah satu dari: resort, wisma, bungalow, homestay, villa.',
-            'imageUrl.url' => 'URL gambar utama harus berupa URL yang valid.',
             'siteUrl.url' => 'URL website harus berupa URL yang valid.',
-            'gallery.*.url' => 'Setiap URL galeri harus berupa URL yang valid.',
             'roomTypes.*.name.required' => 'Nama tipe kamar wajib diisi.',
             'roomTypes.*.description.required' => 'Deskripsi tipe kamar wajib diisi.',
             'roomTypes.*.capacity.integer' => 'Kapasitas tipe kamar harus berupa angka bulat.',
@@ -57,15 +56,15 @@ final class SaveAccomodationRequest extends FormRequest
      *     title: string,
      *     description: string,
      *     full_description: string,
-     *     image_url: string,
+     *     image: string,
      *     category: string,
      *     min_price: string,
      *     max_price: string,
      *     location: string,
+     *     location_map: string|null,
      *     contacs: string,
-     *     site_url: string,
-     *     facilities: list<string>,
-     *     gallery: list<string>
+     *     site_url: string|null,
+     *     facilities: list<string>
      * }
      */
     public function accomodationAttributes(): array
@@ -76,15 +75,15 @@ final class SaveAccomodationRequest extends FormRequest
             'title' => (string) $validated['title'],
             'description' => (string) $validated['description'],
             'full_description' => (string) $validated['fullDescription'],
-            'image_url' => (string) $validated['imageUrl'],
+            'image' => (string) $validated['image'],
             'category' => (string) $validated['category'],
             'min_price' => (string) $validated['minPrice'],
             'max_price' => (string) $validated['maxPrice'],
             'location' => (string) $validated['location'],
+            'location_map' => isset($validated['location_map']) ? (string) $validated['location_map'] : null,
             'contacs' => (string) $validated['contacs'],
-            'site_url' => (string) $validated['siteUrl'],
+            'site_url' => isset($validated['siteUrl']) ? (string) $validated['siteUrl'] : null,
             'facilities' => array_values($validated['facilities']),
-            'gallery' => array_values($validated['gallery']),
         ];
     }
 

@@ -20,15 +20,15 @@ final class Accomodation extends Model
         'title',
         'description',
         'full_description',
-        'image_url',
+        'image',
         'category',
         'min_price',
         'max_price',
         'location',
+        'location_map',
         'contacs',
         'site_url',
         'facilities',
-        'gallery',
     ];
 
     /**
@@ -38,7 +38,6 @@ final class Accomodation extends Model
     {
         return [
             'facilities' => 'array',
-            'gallery' => 'array',
         ];
     }
 
@@ -50,5 +49,10 @@ final class Accomodation extends Model
     public function roomTypes(): HasMany
     {
         return $this->hasMany(RoomType::class, 'accommodation_id');
+    }
+
+    public function accomodationGalleries(): HasMany
+    {
+        return $this->hasMany(AccomodationGalleries::class);
     }
 }
