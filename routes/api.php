@@ -16,6 +16,8 @@ use App\Http\Controllers\SpecialtyController;
 use App\Http\Controllers\TransportationController;
 use App\Http\Controllers\TransportationStepsController;
 use App\Http\Controllers\TransportationTipsController;
+use App\Http\Controllers\PhotoSpotController;
+use App\Http\Controllers\PhotoSpotGalleriesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +55,13 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::post('/culinaryGalleries', [CulinaryGalleriesController::class, 'store']);
     Route::delete('/culinaryGalleries/{culinaryGalleries:id}', [CulinaryGalleriesController::class, 'destroy']);
 
+    Route::post('/photoSpots', [PhotoSpotController::class, 'store']);
+    Route::post('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'update']);
+    Route::delete('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'destroy']);
+
+    Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
+    Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
+
     Route::post('/transportations', [TransportationController::class, 'store']);
     Route::post('/transportations/{transportation:id}', [TransportationController::class, 'update']);
     Route::delete('/transportations/{transportation:id}', [TransportationController::class, 'destroy']);
@@ -88,3 +97,5 @@ Route::get('/transportations', [TransportationController::class, 'index']);
 Route::get('/transportations/{transportation:id}', [TransportationController::class, 'show']);
 Route::get('/additionalCulinaries', [AdditionalCulinaryController::class, 'index']);
 Route::get('/additionalInformation', [AdditionalInformationController::class, 'index']);
+Route::get('/photoSpots', [PhotoSpotController::class, 'index']);
+Route::get('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'show']);
