@@ -38,7 +38,7 @@ Route::prefix('admin')->as('admin.')
 
         Route::get('/accomodations', [AccomodationController::class, 'adminIndex'])->name('accomodations.index');
         Route::post('/accomodations', [AccomodationController::class, 'store'])->name('accomodations.store');
-        Route::put('/accomodations/{accomodation:slug}', [AccomodationController::class, 'update'])->name('accomodations.update');
+        Route::post('/accomodations/{accomodation:slug}', [AccomodationController::class, 'update'])->name('accomodations.update');
         Route::delete('/accomodations/{accomodation:slug}', [AccomodationController::class, 'destroy'])->name('accomodations.destroy');
 
         Route::post('/accomodationGalleries', [AccomodationGalleriesController::class, 'store']);
