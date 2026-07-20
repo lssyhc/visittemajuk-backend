@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\AccomodationGalleries;
 
+use App\Models\Accomodation;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 final class SaveAccomodationGalleriesRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ final class SaveAccomodationGalleriesRequest extends FormRequest
 
         return [
             'image' => $image,
-            'accomodation_id' => ['required', 'integer'],
+            'accomodation_id' => ['required'],
         ];
     }
 
@@ -32,10 +34,21 @@ final class SaveAccomodationGalleriesRequest extends FormRequest
     public function accomodationGalleriesAttributes(): array
     {
         $validated = $this->validated();
+        $accomodationReference = $validated['accomodation_id'];
+
+        $accomodationId = is_numeric($accomodationReference)
+            ? (int) $accomodationReference
+            : Accomodation::query()->where('slug', (string) $accomodationReference)->value('id');
+
+        if ($accomodationId === null) {
+            throw ValidationException::withMessages([
+                'accomodation_id' => ['Akomodasi tidak ditemukan.'],
+            ]);
+        }
 
         return [
             'image' => (string) $validated['image'],
-            'accomodation_id' => (int) $validated['accomodation_id'],
+            'accomodation_id' => (int) $accomodationId,
         ];
     }
 }
