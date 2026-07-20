@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AccomodationController;
+use App\Http\Controllers\AccomodationGalleriesController;
 use App\Http\Controllers\AdditionalCulinaryController;
 use App\Http\Controllers\AdditionalInformationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -39,6 +40,9 @@ Route::prefix('admin')->as('admin.')
         Route::post('/accomodations', [AccomodationController::class, 'store'])->name('accomodations.store');
         Route::put('/accomodations/{accomodation:slug}', [AccomodationController::class, 'update'])->name('accomodations.update');
         Route::delete('/accomodations/{accomodation:slug}', [AccomodationController::class, 'destroy'])->name('accomodations.destroy');
+
+        Route::post('/accomodationGalleries', [AccomodationGalleriesController::class, 'store']);
+        Route::delete('/accomodationGalleries/{accomodationGalleries:id}', [AccomodationGalleriesController::class, 'destroy']);
     });
 
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
