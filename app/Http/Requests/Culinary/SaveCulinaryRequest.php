@@ -15,11 +15,13 @@ final class SaveCulinaryRequest extends FormRequest
 
     public function rules(): array
     {
+        $image = $this->hasFile('image') ? 'required|image|mimes:jpg,jpeg,webp|max:1024' : 'required|string|max:255';
+
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'full_description' => ['required', 'string'],
-            'image' => ['required'],
+            'image' => $image,
             'category' => ['required', 'string', 'max:255'],
             'price' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string'],

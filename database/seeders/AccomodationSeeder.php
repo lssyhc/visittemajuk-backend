@@ -45,11 +45,11 @@ final class AccomodationSeeder extends Seeder
      *     full_description: string,
      *     image_url: string,
      *     category: string,
-     *     min_price: string,
-     *     max_price: string,
+     *     min_price: int,
+     *     max_price: int,
      *     location: string,
      *     contacs: string,
-     *     site_url: string,
+     *     site_url: ?string,
      *     facilities: list<string>,
      *     gallery: list<string>,
      *     room_types: list<array{name: string, description: string, capacity: int, price: float}>
@@ -120,6 +120,7 @@ final class AccomodationSeeder extends Seeder
                 'max_price' => 300000,
                 'location' => 'Jl. Nelayan Rt. 03, Desa Temajuk, Kecamatan Paloh, Kabupaten Sambas, Kalimantan Barat',
                 'contacs' => '+62 813-9876-5432',
+                'site_url' => null,
                 'facilities' => [
                     'Sarapan Termasuk',
                     'WiFi Gratis',
@@ -216,6 +217,7 @@ final class AccomodationSeeder extends Seeder
                 'max_price' => 200000,
                 'location' => 'Gg. Mawar No. 5, Desa Temajuk, Kecamatan Paloh, Kabupaten Sambas, Kalimantan Barat',
                 'contacs' => '+62 853-2345-6789',
+                'site_url' => null,
                 'facilities' => [
                     'Makan 3x Sehari (Opsional)',
                     'Dapur Bersama',
@@ -314,6 +316,7 @@ final class AccomodationSeeder extends Seeder
                 'max_price' => 180000,
                 'location' => 'Jl. Desa Rt. 01, Desa Temajuk, Kecamatan Paloh, Kabupaten Sambas, Kalimantan Barat',
                 'contacs' => '+62 819-6543-2109',
+                'site_url' => null,
                 'facilities' => [
                     'Makan Pagi & Malam',
                     'Dapur Bersama',
