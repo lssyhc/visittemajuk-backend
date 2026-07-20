@@ -39,7 +39,9 @@ final class Culinary extends Model
     {
         if (is_numeric($value)) {
             return $this->where('id', $value)->firstOrFail();
-        } else {
+        }
+
+        if (is_string($value)) {
             return $this->where('slug', $value)->firstOrFail();
         }
 
