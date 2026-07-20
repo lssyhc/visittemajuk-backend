@@ -36,6 +36,7 @@ final class CulinaryResource extends JsonResource
             'location_map' => $culinary->location_map,
             'open_hours' => $culinary->open_hours,
             'contact' => $culinary->contact,
+            'slug' => $culinary->slug,
             'specialties' => $culinary->specialties,
             'culinary_galleries' => $culinary->culinaryGalleries,
         ];
