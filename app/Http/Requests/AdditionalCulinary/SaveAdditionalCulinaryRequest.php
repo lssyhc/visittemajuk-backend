@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\CulinaryGalleries;
+namespace App\Http\Requests\AdditionalCulinary;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class SaveCulinaryGalleriesRequest extends FormRequest
+final class SaveAdditionalCulinaryRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -18,8 +18,9 @@ final class SaveCulinaryGalleriesRequest extends FormRequest
         $image = $this->hasFile('image') ? 'required|image|mimes:jpg,jpeg,webp|max:1024' : 'required|string|max:255';
 
         return [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:255'],
             'image' => $image,
-            'culinary_id' => ['required', 'integer'],
         ];
     }
 
@@ -29,13 +30,14 @@ final class SaveCulinaryGalleriesRequest extends FormRequest
      *     culinary_id: int
      * }
      */
-    public function culinaryGalleriesAttributes(): array
+    public function additionalCulinaryAttributes(): array
     {
         $validated = $this->validated();
 
         return [
+            'title' => (string) $validated['title'],
+            'description' => (string) $validated['description'],
             'image' => (string) $validated['image'],
-            'culinary_id' => (int) $validated['culinary_id'],
         ];
     }
 }

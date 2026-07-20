@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CulinaryController extends Controller
@@ -36,6 +37,7 @@ final class CulinaryController extends Controller
     {
 
         $attributes = $request->culinaryAttributes();
+        $attributes['slug'] = Str::slug($attributes['title']);
 
         if ($request->hasFile('image')) {
             $attributes['image'] = $request->file('image')->store('culinaries', 'public');
@@ -67,6 +69,7 @@ final class CulinaryController extends Controller
     {
         $updateCulinary = Culinary::findOrFail($culinary->id);
         $updateCulinaryData = $request->culinaryAttributes();
+        $updateCulinaryData['slug'] = Str::slug($updateCulinaryData['title']);
 
         if ($request->hasFile('image') && $updateCulinary['image'] != $request->image) {
             Storage::disk('public')->delete($updateCulinary['image']);
