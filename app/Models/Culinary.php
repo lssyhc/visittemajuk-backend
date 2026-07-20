@@ -35,6 +35,13 @@ final class Culinary extends Model
         return $this->hasMany(CulinaryGalleries::class);
     }
 
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return Model|null
+     */
     public function resolveRouteBinding($value, $field = null)
     {
         if (is_numeric($value)) {

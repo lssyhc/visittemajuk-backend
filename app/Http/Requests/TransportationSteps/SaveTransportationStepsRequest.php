@@ -27,7 +27,7 @@ final class SaveTransportationStepsRequest extends FormRequest
     /**
      * @return array{
      *     description: string,
-     *     time: string,
+     *     duration: string,
      *     cost: string,
      *     transportation_id: int,
      *     vehicle: string,

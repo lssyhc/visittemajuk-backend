@@ -26,8 +26,9 @@ final class SaveAdditionalCulinaryRequest extends FormRequest
 
     /**
      * @return array{
-     *     image: string,
-     *     culinary_id: int
+     *     title : string,
+     *     description: string,
+     *     image: string
      * }
      */
     public function additionalCulinaryAttributes(): array
