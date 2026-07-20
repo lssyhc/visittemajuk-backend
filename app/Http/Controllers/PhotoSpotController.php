@@ -30,6 +30,16 @@ final class PhotoSpotController extends Controller
         );
     }
 
+    public function adminIndex(ListPhotoSpotRequest $request): JsonResponse
+    {
+        $photoSpots = $this->paginatedPhotoSpots($request, searchDescription: false);
+
+        return $this->successResponse(
+            data: PhotoSpotResource::collection($photoSpots->getCollection()),
+            meta: $this->indexMeta($photoSpots),
+        );
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -104,10 +114,10 @@ final class PhotoSpotController extends Controller
 
         if ($search !== null) {
             $query->where(function (Builder $query) use ($search, $searchDescription): void {
-                $query->where('title', 'like', '%'.$search.'%');
+                $query->where('title', 'like', '%' . $search . '%');
 
                 if ($searchDescription) {
-                    $query->orWhere('description', 'like', '%'.$search.'%');
+                    $query->orWhere('description', 'like', '%' . $search . '%');
                 }
             });
         }

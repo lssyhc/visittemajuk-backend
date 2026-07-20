@@ -43,6 +43,14 @@ Route::prefix('admin')->as('admin.')
 
         Route::post('/accomodationGalleries', [AccomodationGalleriesController::class, 'store']);
         Route::delete('/accomodationGalleries/{accomodationGalleries:id}', [AccomodationGalleriesController::class, 'destroy']);
+
+        Route::get('/photoSpots', [PhotoSpotController::class, 'adminIndex'])->name('photoSpots.index');
+        Route::post('/photoSpots', [PhotoSpotController::class, 'store'])->name('photoSpots.store');
+        Route::post('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'update'])->name('photoSpots.update');
+        Route::delete('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'destroy'])->name('photoSpots.destroy');
+
+        Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
+        Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
     });
 
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
