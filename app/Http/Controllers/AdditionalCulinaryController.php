@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdditionalCulinaryController extends Controller
+final class AdditionalCulinaryController extends Controller
 {
     /**
      * Display a listing of the resource.

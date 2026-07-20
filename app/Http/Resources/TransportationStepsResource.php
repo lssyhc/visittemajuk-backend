@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use LogicException;
 
-class TransportationStepsResource extends JsonResource
+final class TransportationStepsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

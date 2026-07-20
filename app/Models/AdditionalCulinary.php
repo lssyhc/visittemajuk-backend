@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AdditionalCulinary extends Model
+final class AdditionalCulinary extends Model
 {
     protected $table = 'additionalculinaries';
 

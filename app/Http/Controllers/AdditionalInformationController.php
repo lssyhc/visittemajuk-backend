@@ -10,7 +10,7 @@ use App\Models\AdditionalInformation;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdditionalInformationController extends Controller
+final class AdditionalInformationController extends Controller
 {
     /**
      * Display a listing of the resource.

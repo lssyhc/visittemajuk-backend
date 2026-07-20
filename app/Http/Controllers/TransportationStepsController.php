@@ -10,7 +10,7 @@ use App\Models\TransportationSteps;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class TransportationStepsController extends Controller
+final class TransportationStepsController extends Controller
 {
     /**
      * Store a newly created resource in storage.

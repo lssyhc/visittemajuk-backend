@@ -14,7 +14,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
-class TransportationController extends Controller
+final class TransportationController extends Controller
 {
     /**
      * Display a listing of the resource.

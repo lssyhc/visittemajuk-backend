@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use LogicException;
 
-class AdditionalCulinaryResource extends JsonResource
+final class AdditionalCulinaryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
