@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AccomodationController;
+use App\Http\Controllers\AccomodationGalleriesController;
 use App\Http\Controllers\AdditionalCulinaryController;
 use App\Http\Controllers\AdditionalInformationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Auth\RefreshTokenController;
 use App\Http\Controllers\CulinaryController;
 use App\Http\Controllers\CulinaryGalleriesController;
 use App\Http\Controllers\DestinationController;
+use App\Http\Controllers\PhotoSpotController;
+use App\Http\Controllers\PhotoSpotGalleriesController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SpecialtyController;
 use App\Http\Controllers\TransportationController;
@@ -35,8 +38,19 @@ Route::prefix('admin')->as('admin.')
 
         Route::get('/accomodations', [AccomodationController::class, 'adminIndex'])->name('accomodations.index');
         Route::post('/accomodations', [AccomodationController::class, 'store'])->name('accomodations.store');
-        Route::put('/accomodations/{accomodation:slug}', [AccomodationController::class, 'update'])->name('accomodations.update');
+        Route::post('/accomodations/{accomodation:slug}', [AccomodationController::class, 'update'])->name('accomodations.update');
         Route::delete('/accomodations/{accomodation:slug}', [AccomodationController::class, 'destroy'])->name('accomodations.destroy');
+
+        Route::post('/accomodationGalleries', [AccomodationGalleriesController::class, 'store']);
+        Route::delete('/accomodationGalleries/{accomodationGalleries:id}', [AccomodationGalleriesController::class, 'destroy']);
+
+        Route::get('/photoSpots', [PhotoSpotController::class, 'adminIndex'])->name('photoSpots.index');
+        Route::post('/photoSpots', [PhotoSpotController::class, 'store'])->name('photoSpots.store');
+        Route::post('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'update'])->name('photoSpots.update');
+        Route::delete('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'destroy'])->name('photoSpots.destroy');
+
+        Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
+        Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
     });
 
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
@@ -52,6 +66,13 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
 
     Route::post('/culinaryGalleries', [CulinaryGalleriesController::class, 'store']);
     Route::delete('/culinaryGalleries/{culinaryGalleries:id}', [CulinaryGalleriesController::class, 'destroy']);
+
+    Route::post('/photoSpots', [PhotoSpotController::class, 'store']);
+    Route::post('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'update']);
+    Route::delete('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'destroy']);
+
+    Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
+    Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
 
     Route::post('/transportations', [TransportationController::class, 'store']);
     Route::post('/transportations/{transportation:id}', [TransportationController::class, 'update']);
@@ -88,3 +109,5 @@ Route::get('/transportations', [TransportationController::class, 'index']);
 Route::get('/transportations/{transportation:id}', [TransportationController::class, 'show']);
 Route::get('/additionalCulinaries', [AdditionalCulinaryController::class, 'index']);
 Route::get('/additionalInformation', [AdditionalInformationController::class, 'index']);
+Route::get('/photoSpots', [PhotoSpotController::class, 'index']);
+Route::get('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'show']);

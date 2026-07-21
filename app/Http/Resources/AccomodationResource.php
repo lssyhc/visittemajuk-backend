@@ -24,15 +24,16 @@ final class AccomodationResource extends JsonResource
             'title' => $accomodation->title,
             'description' => $accomodation->description,
             'fullDescription' => $accomodation->full_description,
-            'imageUrl' => $accomodation->image_url,
+            'image' => $accomodation->image,
             'category' => $accomodation->category,
             'minPrice' => $accomodation->min_price,
             'maxPrice' => $accomodation->max_price,
             'location' => $accomodation->location,
+            'location_map' => $accomodation->location_map,
             'contacs' => $accomodation->contacs,
             'siteUrl' => $accomodation->site_url,
             'facilities' => $accomodation->facilities,
-            'gallery' => $accomodation->gallery,
+            'accomodation_galleries' => $accomodation->accomodationGalleries,
             'roomTypes' => RoomTypeResource::collection($accomodation->roomTypes),
         ];
     }

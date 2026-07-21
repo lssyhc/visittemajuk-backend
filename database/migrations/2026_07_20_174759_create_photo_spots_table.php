@@ -13,21 +13,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accomodations', function (Blueprint $table) {
+        Schema::create('photo_spots', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->unique();
             $table->string('title');
-            $table->text('description');
-            $table->longText('full_description');
+            $table->string('description');
+            $table->string('full_description', 896);
             $table->string('image');
             $table->string('category');
-            $table->integer('min_price')->unsigned();
-            $table->integer('max_price')->unsigned();
-            $table->text('location');
+            $table->string('bestHour');
+            $table->string('location');
             $table->string('location_map', 512)->nullable();
-            $table->string('contacs');
-            $table->string('site_url')->nullable();
-            $table->json('facilities');
+            $table->json('tips');
+            $table->json('nearestAttraction');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }
@@ -37,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accomodations');
+        Schema::dropIfExists('photo_spots');
     }
 };

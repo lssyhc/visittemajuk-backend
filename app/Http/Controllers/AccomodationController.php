@@ -11,6 +11,7 @@ use App\Models\Accomodation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,6 +58,10 @@ final class AccomodationController extends Controller
 
         $attributes['slug'] = $slug;
 
+        if ($request->hasFile('image')) {
+            $attributes['image'] = $request->file('image')->store('accomodations', 'public');
+        }
+
         $accomodation = Accomodation::query()->create($attributes);
 
         foreach ($request->roomTypeAttributes() as $roomType) {
@@ -72,7 +77,15 @@ final class AccomodationController extends Controller
 
     public function update(SaveAccomodationRequest $request, Accomodation $accomodation): JsonResponse
     {
-        $accomodation->update($request->accomodationAttributes());
+        $updateAccomodation = Accomodation::findOrFail($accomodation->id);
+        $updateAccomodationData = $request->accomodationAttributes();
+
+        if ($request->hasFile('image') && $updateAccomodation['image'] != $request->image) {
+            Storage::disk('public')->delete($updateAccomodation['image']);
+            $updateAccomodationData['image'] = $request->file('image')->store('accomodations', 'public');
+        }
+
+        $updateAccomodation->update($updateAccomodationData);
 
         $this->syncRoomTypes($accomodation, $request->roomTypeAttributes());
 
@@ -84,6 +97,7 @@ final class AccomodationController extends Controller
 
     public function destroy(Accomodation $accomodation): JsonResponse
     {
+        Storage::disk('public')->delete($accomodation->image);
         $accomodation->delete();
 
         return $this->successResponse(
