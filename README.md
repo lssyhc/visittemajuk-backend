@@ -7,6 +7,7 @@ The project follows standard Laravel MVC conventions. Keep domain code in contro
 ## Requirements
 
 - PHP 8.3 or newer
+- GD extension for PHP (`php-gd`)
 - Composer 2
 - Node.js 24 and npm for Git hooks and documentation/config formatting
 - MySQL 8 or a compatible MySQL database
