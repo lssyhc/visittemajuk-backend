@@ -37,7 +37,7 @@ describe('POST /api/admin/accomodationGalleries', function () {
         ]);
 
         $response = $this
-            ->withHeader('Authorization', 'Bearer ' . $token->plainTextToken)
+            ->withHeader('Authorization', 'Bearer '.$token->plainTextToken)
             ->post('/api/admin/accomodationGalleries', [
                 'image' => UploadedFile::fake()->image('gallery.jpg'),
                 'accomodation_id' => 'resort-baru',

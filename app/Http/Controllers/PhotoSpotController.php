@@ -30,6 +30,16 @@ final class PhotoSpotController extends Controller
         );
     }
 
+    public function adminIndex(ListPhotoSpotRequest $request): JsonResponse
+    {
+        $photoSpots = $this->paginatedPhotoSpots($request, searchDescription: false);
+
+        return $this->successResponse(
+            data: PhotoSpotResource::collection($photoSpots->getCollection()),
+            meta: $this->indexMeta($photoSpots),
+        );
+    }
+
     /**
      * Store a newly created resource in storage.
      */

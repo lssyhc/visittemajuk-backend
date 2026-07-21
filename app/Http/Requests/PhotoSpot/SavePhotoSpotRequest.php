@@ -26,7 +26,7 @@ final class SavePhotoSpotRequest extends FormRequest
             'bestHour' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string'],
             'location_map' => ['nullable', 'string', 'max:512'],
-            'tips' => ['present', 'array'],
+            'tips' => ['sometimes', 'array'],
             'tips.*' => ['required', 'string'],
             'nearestAttraction' => ['present', 'array'],
             'nearestAttraction.*' => ['required', 'string'],
@@ -60,7 +60,7 @@ final class SavePhotoSpotRequest extends FormRequest
             'bestHour' => (string) $validated['bestHour'],
             'location' => (string) $validated['location'],
             'location_map' => isset($validated['location_map']) ? (string) $validated['location_map'] : null,
-            'tips' => array_values($validated['tips']),
+            'tips' => isset($validated['tips']) ? array_values($validated['tips']) : [],
             'nearestAttraction' => array_values($validated['nearestAttraction']),
         ];
     }
