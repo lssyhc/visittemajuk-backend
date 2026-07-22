@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Models\Destination;
+use App\Models\DestinationGallery;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 function adminDestinationRow(
     int $id,
@@ -18,7 +22,7 @@ function adminDestinationRow(
         'title' => $title,
         'description' => $description,
         'full_description' => $description.' Deskripsi lengkap.',
-        'image_url' => 'https://example.test/'.$slug.'.jpg',
+        'image' => 'https://example.test/'.$slug.'.jpg',
         'category' => $category,
         'price' => 'Rp 10.000',
         'location' => 'Desa Temajuk',
@@ -26,7 +30,6 @@ function adminDestinationRow(
         'facilities' => json_encode(['Area Parkir'], JSON_THROW_ON_ERROR),
         'activities' => json_encode(['Berenang'], JSON_THROW_ON_ERROR),
         'tips' => json_encode(['Bawalah sunblock'], JSON_THROW_ON_ERROR),
-        'gallery' => json_encode(['https://example.test/'.$slug.'-gallery.jpg'], JSON_THROW_ON_ERROR),
         'created_at' => now(),
         'updated_at' => now(),
     ];
@@ -66,8 +69,8 @@ describe('GET /api/admin/destinations', function () {
             ->getJson('/api/admin/destinations?category=Alam')
             ->assertOk()
             ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.id', 'bukit-maung')
-            ->assertJsonPath('data.1.id', 'hutan-mangrove')
+            ->assertJsonPath('data.0.id', 'hutan-mangrove')
+            ->assertJsonPath('data.1.id', 'bukit-maung')
             ->assertJsonPath('meta.filters.categories.0', 'Alam')
             ->assertJsonPath('meta.filters.categories.1', 'Pantai')
             ->assertJsonPath('meta.pagination.total', 2);
@@ -91,7 +94,7 @@ describe('GET /api/admin/destinations', function () {
             ->getJson('/api/admin/destinations?page=3&per_page=4')
             ->assertOk()
             ->assertJsonCount(4, 'data')
-            ->assertJsonPath('data.0.id', 'destinasi-9')
+            ->assertJsonPath('data.0.id', 'destinasi-4')
             ->assertJsonPath('meta.pagination.current_page', 3)
             ->assertJsonPath('meta.pagination.per_page', 4)
             ->assertJsonPath('meta.pagination.last_page', 3)
@@ -107,16 +110,18 @@ describe('GET /api/admin/destinations', function () {
 });
 
 describe('POST /api/admin/destinations', function () {
-    it('creates a destination from the admin form payload', function () {
-        $user = User::factory()->create();
-        $token = $user->createToken('api-token', ['api:access']);
+    it('creates a destination with an uploaded image file', function () {
+        Storage::fake('public');
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$token->plainTextToken)
-            ->postJson('/api/admin/destinations', [
+        $user = User::factory()->create();
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/destinations', [
                 'title' => 'Pantai Temajuk',
                 'description' => 'Pantai eksotis dengan pasir putih.',
                 'fullDescription' => 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.',
-                'imageUrl' => 'https://example.test/pantai.jpg',
+                'image' => UploadedFile::fake()->image('pantai.jpg'),
                 'category' => 'Pantai',
                 'price' => 'Rp 10.000',
                 'location' => 'Desa Temajuk',
@@ -124,7 +129,6 @@ describe('POST /api/admin/destinations', function () {
                 'facilities' => ['Area Parkir', 'Toilet Umum'],
                 'activities' => ['Berenang', 'Melihat Sunset'],
                 'tips' => ['Bawalah sunblock'],
-                'gallery' => ['https://example.test/gallery.jpg'],
             ]);
 
         $response
@@ -132,30 +136,20 @@ describe('POST /api/admin/destinations', function () {
             ->assertJsonPath('success', true)
             ->assertJsonPath('message', 'Destinasi berhasil dibuat.')
             ->assertJsonPath('data.id', 'pantai-temajuk')
-            ->assertJsonPath('data.fullDescription', 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.')
-            ->assertJsonPath('data.imageUrl', 'https://example.test/pantai.jpg')
-            ->assertJsonPath('data.openHours', '24 jam')
             ->assertJsonPath('data.facilities.1', 'Toilet Umum');
 
-        $this->assertDatabaseHas('destinations', [
-            'slug' => 'pantai-temajuk',
-            'title' => 'Pantai Temajuk',
-            'full_description' => 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.',
-            'image_url' => 'https://example.test/pantai.jpg',
-            'open_hours' => '24 jam',
-        ]);
+        Storage::disk('public')->assertExists($response->json('data.image'));
     });
 
-    it('allows empty list fields from the admin form', function () {
+    it('rejects destination creation without an image', function () {
         $user = User::factory()->create();
-        $token = $user->createToken('api-token', ['api:access']);
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
 
-        $this->withHeader('Authorization', 'Bearer '.$token->plainTextToken)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->postJson('/api/admin/destinations', [
-                'title' => 'Pantai Baru',
-                'description' => 'Pantai baru.',
-                'fullDescription' => 'Pantai baru untuk dikunjungi.',
-                'imageUrl' => 'https://example.test/pantai-baru.jpg',
+                'title' => 'Pantai No Image',
+                'description' => 'Tanpa gambar.',
+                'fullDescription' => 'Tanpa gambar seharusnya ditolak.',
                 'category' => 'Pantai',
                 'price' => 'Rp 10.000',
                 'location' => 'Desa Temajuk',
@@ -163,37 +157,33 @@ describe('POST /api/admin/destinations', function () {
                 'facilities' => [],
                 'activities' => [],
                 'tips' => [],
-                'gallery' => [],
-            ])
-            ->assertCreated()
-            ->assertJsonPath('data.facilities', [])
-            ->assertJsonPath('data.activities', [])
-            ->assertJsonPath('data.tips', [])
-            ->assertJsonPath('data.gallery', []);
-    });
-
-    it('rejects relative image paths from the admin form', function () {
-        $this->withHeader('Authorization', 'Bearer '.adminDestinationToken())
-            ->postJson('/api/admin/destinations', [
-                'title' => 'Pantai Relative',
-                'description' => 'Pantai dengan gambar relative.',
-                'fullDescription' => 'Pantai dengan gambar relative yang harus ditolak.',
-                'imageUrl' => 'images/batu-nenek-aluwi.jpg',
-                'category' => 'Pantai',
-                'price' => 'Rp 10.000',
-                'location' => 'Desa Temajuk',
-                'openHours' => '24 jam',
-                'facilities' => [],
-                'activities' => [],
-                'tips' => [],
-                'gallery' => ['images/batu-nenek-aluwi.jpg'],
             ])
             ->assertUnprocessable()
-            ->assertJsonPath('success', false)
-            ->assertJsonPath('message', 'Data yang diberikan tidak valid.')
-            ->assertJsonValidationErrors(['imageUrl', 'gallery.0'])
-            ->assertJsonFragment(['URL gambar utama harus berupa URL yang valid.'])
-            ->assertJsonFragment(['URL galeri harus berupa URL yang valid.']);
+            ->assertJsonValidationErrors(['image']);
+    });
+
+    it('rejects non-image file upload', function () {
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
+
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/destinations', [
+                'title' => 'Pantai Teks',
+                'description' => 'Gambar bukan gambar.',
+                'fullDescription' => 'File yang dikirim bukan gambar.',
+                'image' => UploadedFile::fake()->create('not-image.pdf', 100, 'application/pdf'),
+                'category' => 'Pantai',
+                'price' => 'Rp 10.000',
+                'location' => 'Desa Temajuk',
+                'openHours' => '24 jam',
+                'facilities' => [],
+                'activities' => [],
+                'tips' => [],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['image']);
     });
 
     it('rejects a destination title that would duplicate an existing slug', function () {
@@ -201,12 +191,15 @@ describe('POST /api/admin/destinations', function () {
             adminDestinationRow(1, 'pantai-temajuk', 'Pantai Temajuk', 'Pantai eksotis di Temajuk.'),
         ]);
 
-        $this->withHeader('Authorization', 'Bearer '.adminDestinationToken())
-            ->postJson('/api/admin/destinations', [
+        Storage::fake('public');
+        $token = adminDestinationToken();
+
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/destinations', [
                 'title' => 'Pantai  Temajuk',
                 'description' => 'Pantai lain dengan judul yang menghasilkan slug sama.',
                 'fullDescription' => 'Pantai lain dengan judul yang menghasilkan slug sama.',
-                'imageUrl' => 'https://example.test/pantai-duplikat.jpg',
+                'image' => UploadedFile::fake()->image('pantai-dup.jpg'),
                 'category' => 'Pantai',
                 'price' => 'Rp 10.000',
                 'location' => 'Desa Temajuk',
@@ -214,7 +207,6 @@ describe('POST /api/admin/destinations', function () {
                 'facilities' => [],
                 'activities' => [],
                 'tips' => [],
-                'gallery' => [],
             ])
             ->assertUnprocessable()
             ->assertJsonPath('success', false)
@@ -223,36 +215,34 @@ describe('POST /api/admin/destinations', function () {
     });
 });
 
-describe('PUT /api/admin/destinations/{id}', function () {
+describe('POST /api/admin/destinations/{slug} (update)', function () {
     it('updates a destination without changing its frontend id', function () {
-        DB::table('destinations')->insert([
-            'id' => 1,
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
+
+        $destination = Destination::query()->create([
             'slug' => 'pantai-temajuk',
             'title' => 'Pantai Temajuk',
             'description' => 'Pantai eksotis dengan pasir putih.',
             'full_description' => 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.',
-            'image_url' => 'https://example.test/pantai.jpg',
+            'image' => 'destinations/old-pantai.jpg',
             'category' => 'Pantai',
             'price' => 'Rp 10.000',
             'location' => 'Desa Temajuk',
             'open_hours' => '24 jam',
-            'facilities' => json_encode(['Area Parkir'], JSON_THROW_ON_ERROR),
-            'activities' => json_encode(['Berenang'], JSON_THROW_ON_ERROR),
-            'tips' => json_encode(['Bawalah sunblock'], JSON_THROW_ON_ERROR),
-            'gallery' => json_encode(['https://example.test/gallery.jpg'], JSON_THROW_ON_ERROR),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'facilities' => ['Area Parkir'],
+            'activities' => ['Berenang'],
+            'tips' => ['Bawalah sunblock'],
         ]);
 
-        $user = User::factory()->create();
-        $token = $user->createToken('api-token', ['api:access']);
-
-        $response = $this->withHeader('Authorization', 'Bearer '.$token->plainTextToken)
-            ->putJson('/api/admin/destinations/pantai-temajuk', [
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/destinations/pantai-temajuk', [
+                '_method' => 'POST',
                 'title' => 'Pantai Temajuk Baru',
                 'description' => 'Deskripsi baru.',
                 'fullDescription' => 'Deskripsi lengkap baru untuk Pantai Temajuk.',
-                'imageUrl' => 'https://example.test/pantai-baru.jpg',
                 'category' => 'Pantai',
                 'price' => 'Rp 12.000',
                 'location' => 'Desa Temajuk Baru',
@@ -260,7 +250,6 @@ describe('PUT /api/admin/destinations/{id}', function () {
                 'facilities' => ['Area Parkir', 'Warung Makan'],
                 'activities' => ['Berenang', 'Snorkeling'],
                 'tips' => ['Datang pagi hari'],
-                'gallery' => ['https://example.test/gallery-baru.jpg'],
             ]);
 
         $response
@@ -272,48 +261,203 @@ describe('PUT /api/admin/destinations/{id}', function () {
             ->assertJsonPath('data.openHours', '06.00 - 18.00 WIB')
             ->assertJsonPath('data.facilities.1', 'Warung Makan');
 
-        $this->assertDatabaseHas('destinations', [
-            'slug' => 'pantai-temajuk',
-            'title' => 'Pantai Temajuk Baru',
-            'image_url' => 'https://example.test/pantai-baru.jpg',
-            'open_hours' => '06.00 - 18.00 WIB',
-        ]);
+        // Original image preserved (no new upload)
+        expect($destination->fresh()->image)->toBe('destinations/old-pantai.jpg');
     });
-});
 
-describe('DELETE /api/admin/destinations/{id}', function () {
-    it('deletes a destination by frontend id', function () {
-        DB::table('destinations')->insert([
-            'id' => 1,
+    it('replaces image and deletes old file when new file uploaded', function () {
+        Storage::fake('public');
+        // seed an existing image file
+        Storage::disk('public')->put('destinations/old.jpg', 'old-content');
+
+        $user = User::factory()->create();
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
+
+        Destination::query()->create([
             'slug' => 'pantai-temajuk',
             'title' => 'Pantai Temajuk',
-            'description' => 'Pantai eksotis dengan pasir putih.',
-            'full_description' => 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.',
-            'image_url' => 'https://example.test/pantai.jpg',
+            'description' => 'desc',
+            'full_description' => 'full',
+            'image' => 'destinations/old.jpg',
             'category' => 'Pantai',
             'price' => 'Rp 10.000',
             'location' => 'Desa Temajuk',
             'open_hours' => '24 jam',
-            'facilities' => json_encode(['Area Parkir'], JSON_THROW_ON_ERROR),
-            'activities' => json_encode(['Berenang'], JSON_THROW_ON_ERROR),
-            'tips' => json_encode(['Bawalah sunblock'], JSON_THROW_ON_ERROR),
-            'gallery' => json_encode(['https://example.test/gallery.jpg'], JSON_THROW_ON_ERROR),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'facilities' => [],
+            'activities' => [],
+            'tips' => [],
         ]);
 
-        $user = User::factory()->create();
-        $token = $user->createToken('api-token', ['api:access']);
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/destinations/pantai-temajuk', [
+                '_method' => 'POST',
+                'title' => 'Pantai Temajuk',
+                'description' => 'desc',
+                'fullDescription' => 'full',
+                'image' => UploadedFile::fake()->image('new.jpg'),
+                'category' => 'Pantai',
+                'price' => 'Rp 10.000',
+                'location' => 'Desa Temajuk',
+                'openHours' => '24 jam',
+                'facilities' => [],
+                'activities' => [],
+                'tips' => [],
+            ])
+            ->assertOk();
 
-        $this->withHeader('Authorization', 'Bearer '.$token->plainTextToken)
+        Storage::disk('public')->assertMissing('destinations/old.jpg');
+    });
+});
+
+describe('DELETE /api/admin/destinations/{slug}', function () {
+    it('deletes a destination by frontend id', function () {
+        Storage::fake('public');
+        Storage::disk('public')->put('destinations/pantai.jpg', 'content');
+
+        $user = User::factory()->create();
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
+
+        Destination::query()->create([
+            'slug' => 'pantai-temajuk',
+            'title' => 'Pantai Temajuk',
+            'description' => 'desc',
+            'full_description' => 'full',
+            'image' => 'destinations/pantai.jpg',
+            'category' => 'Pantai',
+            'price' => 'Rp 10.000',
+            'location' => 'Desa Temajuk',
+            'open_hours' => '24 jam',
+            'facilities' => [],
+            'activities' => [],
+            'tips' => [],
+        ]);
+
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->deleteJson('/api/admin/destinations/pantai-temajuk')
             ->assertOk()
             ->assertJsonPath('success', true)
-            ->assertJsonPath('message', 'Destinasi berhasil dihapus.')
-            ->assertJsonPath('data', null);
+            ->assertJsonPath('message', 'Destinasi berhasil dihapus.');
 
-        $this->assertDatabaseMissing('destinations', [
+        Storage::disk('public')->assertMissing('destinations/pantai.jpg');
+        $this->assertDatabaseMissing('destinations', ['slug' => 'pantai-temajuk']);
+    });
+});
+
+describe('POST /api/admin/destinations/{slug}/galleries', function () {
+    it('adds a gallery image to an existing destination', function () {
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+        $token = $user->createToken('api-token', ['api:access'])->plainTextToken;
+
+        $destination = Destination::query()->create([
             'slug' => 'pantai-temajuk',
+            'title' => 'Pantai Temajuk',
+            'description' => 'desc',
+            'full_description' => 'full',
+            'image' => 'destinations/main.jpg',
+            'category' => 'Pantai',
+            'price' => 'Rp 10.000',
+            'location' => 'Desa Temajuk',
+            'open_hours' => '24 jam',
+            'facilities' => [],
+            'activities' => [],
+            'tips' => [],
         ]);
+
+        $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/admin/destinations/pantai-temajuk/galleries', [
+                'image' => UploadedFile::fake()->image('gallery.jpg'),
+                'sort_order' => 2,
+            ])
+            ->assertCreated()
+            ->assertJsonPath('data.sortOrder', 2);
+
+        Storage::disk('public')->assertExists(DestinationGallery::query()->first()->image);
+    });
+});
+
+describe('GET /api/admin/destinations/{slug} (adminShow)', function () {
+    it('returns a single destination with galleries', function () {
+        $destination = Destination::query()->create([
+            'slug' => 'pantai-temajuk',
+            'title' => 'Pantai Temajuk',
+            'description' => 'desc',
+            'full_description' => 'full desc',
+            'image' => 'destinations/main.jpg',
+            'category' => 'Pantai',
+            'price' => 'Rp 10.000',
+            'location' => 'Desa Temajuk',
+            'open_hours' => '24 jam',
+            'facilities' => [],
+            'activities' => [],
+            'tips' => [],
+        ]);
+
+        DestinationGallery::query()->create([
+            'destination_id' => $destination->id,
+            'image' => 'destinations/galleries/g1.jpg',
+            'sort_order' => 1,
+        ]);
+
+        $this->withHeader('Authorization', 'Bearer '.adminDestinationToken())
+            ->getJson('/api/admin/destinations/pantai-temajuk')
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', 'pantai-temajuk')
+            ->assertJsonPath('data.title', 'Pantai Temajuk')
+            ->assertJsonPath('data.galleries.0.image', 'destinations/galleries/g1.jpg');
+    });
+
+    it('returns 404 for non-existent slug', function () {
+        $this->withHeader('Authorization', 'Bearer '.adminDestinationToken())
+            ->getJson('/api/admin/destinations/tidak-ada')
+            ->assertNotFound();
+    });
+
+    it('rejects unauthenticated request', function () {
+        $this->getJson('/api/admin/destinations/pantai-temajuk')
+            ->assertUnauthorized();
+    });
+});
+
+describe('DELETE /api/admin/destinations/galleries/{gallery} (removeGalleryImage)', function () {
+    it('removes gallery image and deletes file from storage', function () {
+        Storage::fake('public');
+        Storage::disk('public')->put('destinations/galleries/g1.jpg', 'content');
+
+        $destination = Destination::query()->create([
+            'slug' => 'pantai-temajuk',
+            'title' => 'Pantai Temajuk',
+            'description' => 'desc',
+            'full_description' => 'full',
+            'image' => 'destinations/main.jpg',
+            'category' => 'Pantai',
+            'price' => 'Rp 10.000',
+            'location' => 'Desa Temajuk',
+            'open_hours' => '24 jam',
+            'facilities' => [],
+            'activities' => [],
+            'tips' => [],
+        ]);
+
+        $gallery = DestinationGallery::query()->create([
+            'destination_id' => $destination->id,
+            'image' => 'destinations/galleries/g1.jpg',
+            'sort_order' => 1,
+        ]);
+
+        $this->withHeader('Authorization', 'Bearer '.adminDestinationToken())
+            ->deleteJson("/api/admin/destinations/galleries/{$gallery->id}")
+            ->assertOk()
+            ->assertJsonPath('message', 'Galeri destinasi berhasil dihapus.');
+
+        $this->assertDatabaseMissing('destination_galleries', ['id' => $gallery->id]);
+        Storage::disk('public')->assertMissing('destinations/galleries/g1.jpg');
+    });
+
+    it('rejects unauthenticated request', function () {
+        $this->deleteJson('/api/admin/destinations/galleries/1')
+            ->assertUnauthorized();
     });
 });

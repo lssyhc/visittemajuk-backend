@@ -20,15 +20,15 @@ final class Destination extends Model
         'title',
         'description',
         'full_description',
-        'image_url',
+        'image',
         'category',
         'price',
         'location',
+        'location_map',
         'open_hours',
         'facilities',
         'activities',
         'tips',
-        'gallery',
     ];
 
     /**
@@ -40,12 +40,22 @@ final class Destination extends Model
             'facilities' => 'array',
             'activities' => 'array',
             'tips' => 'array',
-            'gallery' => 'array',
         ];
     }
 
+    /**
+     * @return HasMany<Review, $this>
+     */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * @return HasMany<DestinationGallery, $this>
+     */
+    public function galleries(): HasMany
+    {
+        return $this->hasMany(DestinationGallery::class)->orderBy('sort_order')->orderBy('id');
     }
 }

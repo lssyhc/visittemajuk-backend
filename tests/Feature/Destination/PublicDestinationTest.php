@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Destination;
+use App\Models\DestinationGallery;
 use Illuminate\Support\Facades\DB;
 
 function publicDestinationRow(
@@ -17,7 +19,7 @@ function publicDestinationRow(
         'title' => $title,
         'description' => $description,
         'full_description' => $description.' Deskripsi lengkap.',
-        'image_url' => 'https://example.test/'.$slug.'.jpg',
+        'image' => 'https://example.test/'.$slug.'.jpg',
         'category' => $category,
         'price' => 'Rp 10.000',
         'location' => 'Desa Temajuk',
@@ -25,7 +27,6 @@ function publicDestinationRow(
         'facilities' => json_encode(['Area Parkir'], JSON_THROW_ON_ERROR),
         'activities' => json_encode(['Berenang'], JSON_THROW_ON_ERROR),
         'tips' => json_encode(['Bawalah sunblock'], JSON_THROW_ON_ERROR),
-        'gallery' => json_encode(['https://example.test/'.$slug.'-gallery.jpg'], JSON_THROW_ON_ERROR),
         'created_at' => now(),
         'updated_at' => now(),
     ];
@@ -33,23 +34,25 @@ function publicDestinationRow(
 
 describe('GET /api/destinations', function () {
     it('returns destinations using the frontend destination contract', function () {
-        DB::table('destinations')->insert([
-            'id' => 1,
+        $destination = Destination::query()->create([
             'slug' => 'pantai-temajuk',
             'title' => 'Pantai Temajuk',
             'description' => 'Pantai eksotis dengan pasir putih.',
             'full_description' => 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.',
-            'image_url' => 'https://example.test/pantai.jpg',
+            'image' => 'https://example.test/pantai.jpg',
             'category' => 'Pantai',
             'price' => 'Rp 10.000',
             'location' => 'Desa Temajuk',
             'open_hours' => '24 jam',
-            'facilities' => json_encode(['Area Parkir', 'Toilet Umum'], JSON_THROW_ON_ERROR),
-            'activities' => json_encode(['Berenang', 'Melihat Sunset'], JSON_THROW_ON_ERROR),
-            'tips' => json_encode(['Bawalah sunblock'], JSON_THROW_ON_ERROR),
-            'gallery' => json_encode(['https://example.test/gallery.jpg'], JSON_THROW_ON_ERROR),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'facilities' => ['Area Parkir', 'Toilet Umum'],
+            'activities' => ['Berenang', 'Melihat Sunset'],
+            'tips' => ['Bawalah sunblock'],
+        ]);
+
+        DestinationGallery::query()->create([
+            'destination_id' => $destination->id,
+            'image' => 'https://example.test/gallery.jpg',
+            'sort_order' => 1,
         ]);
 
         $this->getJson('/api/destinations')
@@ -59,12 +62,12 @@ describe('GET /api/destinations', function () {
             ->assertJsonPath('data.0.id', 'pantai-temajuk')
             ->assertJsonPath('data.0.title', 'Pantai Temajuk')
             ->assertJsonPath('data.0.fullDescription', 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.')
-            ->assertJsonPath('data.0.imageUrl', 'https://example.test/pantai.jpg')
+            ->assertJsonPath('data.0.image', 'https://example.test/pantai.jpg')
             ->assertJsonPath('data.0.openHours', '24 jam')
             ->assertJsonPath('data.0.facilities.0', 'Area Parkir')
             ->assertJsonPath('data.0.activities.1', 'Melihat Sunset')
             ->assertJsonPath('data.0.tips.0', 'Bawalah sunblock')
-            ->assertJsonPath('data.0.gallery.0', 'https://example.test/gallery.jpg')
+            ->assertJsonPath('data.0.galleries.0.image', 'https://example.test/gallery.jpg')
             ->assertJsonMissingPath('data.0.slug')
             ->assertJsonMissingPath('data.0.created_at');
     });
@@ -94,8 +97,8 @@ describe('GET /api/destinations', function () {
         $this->getJson('/api/destinations?category=Alam')
             ->assertOk()
             ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.id', 'bukit-maung')
-            ->assertJsonPath('data.1.id', 'hutan-mangrove')
+            ->assertJsonPath('data.0.id', 'hutan-mangrove')
+            ->assertJsonPath('data.1.id', 'bukit-maung')
             ->assertJsonPath('meta.filters.categories.0', 'Alam')
             ->assertJsonPath('meta.filters.categories.1', 'Pantai')
             ->assertJsonPath('meta.pagination.total', 2);
@@ -118,7 +121,7 @@ describe('GET /api/destinations', function () {
         $this->getJson('/api/destinations?page=2&per_page=5')
             ->assertOk()
             ->assertJsonCount(5, 'data')
-            ->assertJsonPath('data.0.id', 'destinasi-6')
+            ->assertJsonPath('data.0.id', 'destinasi-7')
             ->assertJsonPath('meta.pagination.current_page', 2)
             ->assertJsonPath('meta.pagination.per_page', 5)
             ->assertJsonPath('meta.pagination.last_page', 3)
@@ -126,25 +129,21 @@ describe('GET /api/destinations', function () {
     });
 });
 
-describe('GET /api/destinations/{id}', function () {
-    it('returns one destination by frontend id', function () {
-        DB::table('destinations')->insert([
-            'id' => 1,
+describe('GET /api/destinations/{slug}', function () {
+    it('returns one destination by slug', function () {
+        Destination::query()->create([
             'slug' => 'pantai-temajuk',
             'title' => 'Pantai Temajuk',
             'description' => 'Pantai eksotis dengan pasir putih.',
             'full_description' => 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.',
-            'image_url' => 'https://example.test/pantai.jpg',
+            'image' => 'https://example.test/pantai.jpg',
             'category' => 'Pantai',
             'price' => 'Rp 10.000',
             'location' => 'Desa Temajuk',
             'open_hours' => '24 jam',
-            'facilities' => json_encode(['Area Parkir', 'Toilet Umum'], JSON_THROW_ON_ERROR),
-            'activities' => json_encode(['Berenang', 'Melihat Sunset'], JSON_THROW_ON_ERROR),
-            'tips' => json_encode(['Bawalah sunblock'], JSON_THROW_ON_ERROR),
-            'gallery' => json_encode(['https://example.test/gallery.jpg'], JSON_THROW_ON_ERROR),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'facilities' => ['Area Parkir', 'Toilet Umum'],
+            'activities' => ['Berenang', 'Melihat Sunset'],
+            'tips' => ['Bawalah sunblock'],
         ]);
 
         $this->getJson('/api/destinations/pantai-temajuk')
@@ -153,5 +152,19 @@ describe('GET /api/destinations/{id}', function () {
             ->assertJsonPath('data.id', 'pantai-temajuk')
             ->assertJsonPath('data.title', 'Pantai Temajuk')
             ->assertJsonPath('data.fullDescription', 'Pantai Temajuk adalah pantai eksotis di ujung barat Indonesia.');
+    });
+
+    it('returns empty envelope for empty database', function () {
+        $this->getJson('/api/destinations')
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data', [])
+            ->assertJsonPath('meta.pagination.total', 0)
+            ->assertJsonPath('meta.filters.categories', []);
+    });
+
+    it('returns 404 for non-existent slug', function () {
+        $this->getJson('/api/destinations/tidak-ada')
+            ->assertNotFound();
     });
 });
