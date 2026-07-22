@@ -6,15 +6,19 @@ use App\Http\Controllers\AccomodationController;
 use App\Http\Controllers\AccomodationGalleriesController;
 use App\Http\Controllers\AdditionalCulinaryController;
 use App\Http\Controllers\AdditionalInformationController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RefreshTokenController;
 use App\Http\Controllers\CulinaryController;
 use App\Http\Controllers\CulinaryGalleriesController;
 use App\Http\Controllers\DestinationController;
+use App\Http\Controllers\FooterSocialController;
+use App\Http\Controllers\PhotographyTipController;
 use App\Http\Controllers\PhotoSpotController;
 use App\Http\Controllers\PhotoSpotGalleriesController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SiteSettingsController;
 use App\Http\Controllers\SpecialtyController;
 use App\Http\Controllers\TransportationController;
 use App\Http\Controllers\TransportationStepsController;
@@ -26,15 +30,21 @@ Route::prefix('auth')->as('auth.')->group(function () {
     Route::post('/login', LoginController::class)->middleware('throttle:5,1')->name('login');
     Route::post('/logout', LogoutController::class)->middleware('auth:sanctum')->name('logout');
     Route::post('/refresh', RefreshTokenController::class)->middleware(['auth:sanctum', 'ability:api:access'])->name('refresh');
+    Route::put('/password', ChangePasswordController::class)
+        ->middleware(['auth:sanctum', 'ability:api:access', 'throttle:10,1'])
+        ->name('password.update');
 });
 
 Route::prefix('admin')->as('admin.')
     ->middleware(['auth:sanctum', 'ability:api:access'])
     ->group(function () {
         Route::get('/destinations', [DestinationController::class, 'adminIndex'])->name('destinations.index');
+        Route::get('/destinations/{destination:slug}', [DestinationController::class, 'adminShow'])->name('destinations.show');
         Route::post('/destinations', [DestinationController::class, 'store'])->name('destinations.store');
-        Route::put('/destinations/{destination:slug}', [DestinationController::class, 'update'])->name('destinations.update');
+        Route::post('/destinations/{destination:slug}', [DestinationController::class, 'update'])->name('destinations.update');
         Route::delete('/destinations/{destination:slug}', [DestinationController::class, 'destroy'])->name('destinations.destroy');
+        Route::post('/destinations/{destination:slug}/galleries', [DestinationController::class, 'addGalleryImage'])->name('destinations.galleries.store');
+        Route::delete('/destinations/galleries/{gallery}', [DestinationController::class, 'removeGalleryImage'])->name('destinations.galleries.destroy');
 
         Route::get('/accomodations', [AccomodationController::class, 'adminIndex'])->name('accomodations.index');
         Route::post('/accomodations', [AccomodationController::class, 'store'])->name('accomodations.store');
@@ -51,6 +61,18 @@ Route::prefix('admin')->as('admin.')
 
         Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
         Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
+
+        Route::get('/footer/socials', [FooterSocialController::class, 'adminIndex'])->name('footer.socials.index');
+        Route::post('/footer/socials', [FooterSocialController::class, 'store'])->name('footer.socials.store');
+        Route::put('/footer/socials/{social}', [FooterSocialController::class, 'update'])->name('footer.socials.update');
+        Route::delete('/footer/socials/{social}', [FooterSocialController::class, 'destroy'])->name('footer.socials.destroy');
+
+        Route::put('/site/settings', [SiteSettingsController::class, 'update'])->name('site.settings.update');
+
+        Route::get('/photography-tips', [PhotographyTipController::class, 'adminIndex'])->name('photography-tips.index');
+        Route::post('/photography-tips', [PhotographyTipController::class, 'store'])->name('photography-tips.store');
+        Route::put('/photography-tips/{tip}', [PhotographyTipController::class, 'update'])->name('photography-tips.update');
+        Route::delete('/photography-tips/{tip}', [PhotographyTipController::class, 'destroy'])->name('photography-tips.destroy');
     });
 
 Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
@@ -66,13 +88,6 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
 
     Route::post('/culinaryGalleries', [CulinaryGalleriesController::class, 'store']);
     Route::delete('/culinaryGalleries/{culinaryGalleries:id}', [CulinaryGalleriesController::class, 'destroy']);
-
-    Route::post('/photoSpots', [PhotoSpotController::class, 'store']);
-    Route::post('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'update']);
-    Route::delete('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'destroy']);
-
-    Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
-    Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
 
     Route::post('/transportations', [TransportationController::class, 'store']);
     Route::post('/transportations/{transportation:id}', [TransportationController::class, 'update']);
@@ -96,6 +111,10 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::get('/additionalInformation/{additionalInformation:id}', [AdditionalInformationController::class, 'show']);
     Route::delete('/additionalInformation/{additionalInformation:id}', [AdditionalInformationController::class, 'destroy']);
 });
+
+Route::get('/site/settings', [SiteSettingsController::class, 'show'])->name('site.settings.show');
+Route::get('/footer/socials', [FooterSocialController::class, 'index'])->name('footer.socials.index');
+Route::get('/photography-tips', [PhotographyTipController::class, 'index'])->name('photography-tips.index');
 
 Route::get('/destinations', [DestinationController::class, 'index'])->name('destinations.index');
 Route::get('/destinations/{destination:slug}', [DestinationController::class, 'show'])->name('destinations.show');

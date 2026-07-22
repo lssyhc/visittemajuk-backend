@@ -31,18 +31,6 @@ final class CulinaryGalleriesController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(CulinaryGalleries $culinaryGalleries): JsonResponse
-    {
-        $culinaryGalleries = CulinaryGalleries::where('culinary_id', $culinaryGalleries->id)->get();
-
-        return $this->successResponse(
-            data: CulinaryGalleriesResource::collection($culinaryGalleries),
-        );
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy(CulinaryGalleries $culinaryGalleries)

@@ -62,8 +62,9 @@ jobs:
 
       - name: Prepare Environment
         run: |
-          cp .env.testing .env
-          php artisan key:generate
+          cp .env.testing.example .env.testing
+          KEY="base64:$(openssl rand -base64 32)"
+          sed -i "s|^APP_KEY=.*|APP_KEY=${KEY}|" .env.testing
           php artisan migrate --force --ansi
 
       - name: Run Laravel Pint check

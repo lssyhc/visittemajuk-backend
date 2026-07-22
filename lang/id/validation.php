@@ -12,7 +12,7 @@ return [
     'attributes' => [
         'username' => 'username',
         'password' => 'kata sandi',
-        'imageUrl' => 'URL gambar utama',
+        'image' => 'Gambar utama',
         'gallery.*' => 'URL galeri',
     ],
 ];

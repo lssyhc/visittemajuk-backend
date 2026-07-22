@@ -24,15 +24,22 @@ final class DestinationResource extends JsonResource
             'title' => $destination->title,
             'description' => $destination->description,
             'fullDescription' => $destination->full_description,
-            'imageUrl' => $destination->image_url,
+            'image' => $destination->image,
             'category' => $destination->category,
             'price' => $destination->price,
             'location' => $destination->location,
+            'locationMap' => $destination->location_map,
             'openHours' => $destination->open_hours,
             'facilities' => $destination->facilities,
             'activities' => $destination->activities,
             'tips' => $destination->tips,
-            'gallery' => $destination->gallery,
+            'galleries' => $destination->relationLoaded('galleries')
+                ? $destination->galleries->map(fn ($g): array => [
+                    'id' => $g->id,
+                    'image' => $g->image,
+                    'sort_order' => $g->sort_order,
+                ])->all()
+                : [],
         ];
     }
 }

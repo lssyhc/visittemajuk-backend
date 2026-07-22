@@ -43,7 +43,7 @@ final class AccomodationSeeder extends Seeder
      *     title: string,
      *     description: string,
      *     full_description: string,
-     *     image_url: string,
+     *     image: string,
      *     category: string,
      *     min_price: int,
      *     max_price: int,
@@ -51,7 +51,6 @@ final class AccomodationSeeder extends Seeder
      *     contacs: string,
      *     site_url: ?string,
      *     facilities: list<string>,
-     *     gallery: list<string>,
      *     room_types: list<array{name: string, description: string, capacity: int, price: float}>
      * }>
      */
@@ -64,7 +63,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Temajuk Paradise Resort',
                 'description' => 'Resort tepi pantai dengan pemandangan laut langsung dan fasilitas lengkap untuk liburan keluarga maupun pasangan.',
                 'full_description' => 'Temajuk Paradise Resort berdiri megah di tepi Pantai Temajuk dengan pemandangan Laut Natuna yang tiada duanya. Didesain dengan sentuhan arsitektur tropis modern, setiap kamar dan bungalow memiliki akses langsung ke pantai berpasir putih. Resort ini menyediakan berbagai fasilitas premium mulai dari kolam renang infinity yang menghadap laut, restoran seafood segar, hingga layanan spa tradisional Kalimantan. Cocok untuk bulan madu, liburan keluarga, maupun retreat bisnis. Staf kami yang ramah siap memastikan setiap tamu mendapatkan pengalaman menginap yang tak terlupakan di ujung barat Indonesia.',
-                'image_url' => 'https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/338504/pexels-photo-338504.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'resort',
                 'min_price' => 650000,
                 'max_price' => 1800000,
@@ -80,11 +79,6 @@ final class AccomodationSeeder extends Seeder
                     'Layanan Antar-Jemput',
                     'Penyewaan Alat Snorkeling',
                     'Bar Tepi Pantai',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/189296/pexels-photo-189296.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
@@ -114,7 +108,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Wisma Nelayan Paloh',
                 'description' => 'Penginapan sederhana namun nyaman milik warga lokal, cocok bagi traveler yang ingin merasakan kehidupan pesisir Temajuk.',
                 'full_description' => 'Wisma Nelayan Paloh adalah penginapan milik keluarga nelayan lokal yang telah berdiri lebih dari satu dekade. Berlokasi tak jauh dari perkampungan nelayan, wisma ini menawarkan pengalaman autentik kehidupan masyarakat pesisir Kalimantan Barat. Kamar-kamarnya bersih, sederhana, dan ditata dengan sentuhan budaya Melayu yang hangat. Tamu dapat ikut serta dalam kegiatan melaut bersama nelayan di pagi hari, atau belajar memasak hidangan laut tradisional. Sarapan berupa nasi goreng ikan dan teh tarik sudah termasuk dalam tarif menginap.',
-                'image_url' => 'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'wisma',
                 'min_price' => 150000,
                 'max_price' => 300000,
@@ -128,11 +122,6 @@ final class AccomodationSeeder extends Seeder
                     'Dapur Bersama',
                     'Ruang Santai',
                     'Laundry',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1655329/pexels-photo-1655329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
@@ -162,7 +151,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Bungalow Mangrove Temajuk',
                 'description' => 'Bungalow kayu eksotis di tepi hutan mangrove dengan suasana alam yang tenang dan pemandangan sungai yang memukau.',
                 'full_description' => 'Bungalow Mangrove Temajuk menawarkan pengalaman menginap yang benar-benar menyatu dengan alam. Setiap unit bungalow dibangun dari kayu ulin lokal dan berdiri di atas tiang-tiang di tepi sungai yang berbatasan langsung dengan hutan mangrove. Di pagi hari, tamu dapat menikmati kicauan burung langka dan menyaksikan aktivitas kepiting bakau dari teras masing-masing bungalow. Tersedia juga fasilitas kayak dan perahu untuk menjelajahi hutan mangrove secara mandiri. Bungalow ini sangat ideal bagi pecinta alam dan fotografer yang ingin mengabadikan keindahan ekosistem mangrove.',
-                'image_url' => 'https://images.pexels.com/photos/2476632/pexels-photo-2476632.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/2476632/pexels-photo-2476632.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'bungalow',
                 'min_price' => 350000,
                 'max_price' => 700000,
@@ -177,11 +166,6 @@ final class AccomodationSeeder extends Seeder
                     'Area Parkir',
                     'Pemandu Wisata Mangrove',
                     'Hammock di Setiap Unit',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/2583852/pexels-photo-2583852.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1802255/pexels-photo-1802255.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
@@ -211,7 +195,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Homestay Pak Amin',
                 'description' => 'Homestay hangat dan bersahabat milik keluarga lokal, tinggal bersama tuan rumah dan nikmati masakan rumahan khas Melayu.',
                 'full_description' => 'Homestay Pak Amin adalah rumah keluarga yang dibuka untuk umum dengan penuh keramahan khas masyarakat Melayu Sambas. Tinggal di sini bukan sekadar menginap, tetapi merupakan pengalaman budaya yang mendalam. Tamu akan disambut dengan teh dan kue-kue tradisional, diajak berbincang hangat dengan keluarga tuan rumah, dan disajikan masakan rumahan yang kaya rempah. Lokasi homestay berjarak hanya 500 meter dari Pantai Temajuk. Pak Amin juga dengan senang hati menjadi pemandu wisata informal yang mengenal setiap sudut Desa Temajuk.',
-                'image_url' => 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'homestay',
                 'min_price' => 100000,
                 'max_price' => 200000,
@@ -225,11 +209,6 @@ final class AccomodationSeeder extends Seeder
                     'WiFi Gratis',
                     'Area Parkir',
                     'Sepeda Pinjaman',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/2062426/pexels-photo-2062426.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1457847/pexels-photo-1457847.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
@@ -259,7 +238,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Villa Cakrawala Temajuk',
                 'description' => 'Villa mewah di perbukitan dengan pemandangan panoramik laut Temajuk dan hutan tropis yang memanjakan mata.',
                 'full_description' => 'Villa Cakrawala Temajuk berdiri di ketinggian perbukitan yang menghadap langsung ke Laut Natuna, menawarkan pemandangan 180 derajat yang tiada tara. Setiap villa berdiri sendiri dengan halaman privat, kolam renang pribadi, dan dapur lengkap yang siap untuk memasak sendiri maupun memesan layanan private chef. Desain interiornya memadukan kemewahan kontemporer dengan material alam lokal seperti kayu ulin dan batu alam Kalimantan. Tamu yang menginap akan merasakan privasi dan ketenangan yang sempurna, jauh dari kebisingan kota namun tetap dekat dengan destinasi wisata utama Temajuk.',
-                'image_url' => 'https://images.pexels.com/photos/32870/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/32870/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'villa',
                 'min_price' => 1200000,
                 'max_price' => 3500000,
@@ -276,11 +255,6 @@ final class AccomodationSeeder extends Seeder
                     'Teras Panoramik',
                     'Layanan Antar-Jemput Bandara',
                     'Concierge 24 Jam',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/53464/sheraton-palace-hotel-lobby-architecture-53464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/2631746/pexels-photo-2631746.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/2029722/pexels-photo-2029722.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
@@ -310,7 +284,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Homestay Ibu Sari',
                 'description' => 'Homestay nyaman di pusat desa Temajuk, dikelola ibu rumah tangga lokal dengan layanan personal yang tulus dan masakan rumahan yang lezat.',
                 'full_description' => 'Homestay Ibu Sari adalah tempat peristirahatan favorit para backpacker dan peneliti yang mengunjungi Temajuk. Dikelola langsung oleh Ibu Sari beserta putrinya, homestay ini terkenal dengan kebersihan kamar, kehangatan pelayanan, dan kelezatan masakan Kalimantan Barat yang disajikan setiap hari. Porsi makan yang besar dengan lauk ikan segar langsung dari nelayan membuat banyak tamu menjadi pelanggan setia. Lokasinya strategis, dekat dengan warung, masjid, dan angkutan menuju destinasi wisata utama di Temajuk.',
-                'image_url' => 'https://images.pexels.com/photos/2029731/pexels-photo-2029731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/2029731/pexels-photo-2029731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'homestay',
                 'min_price' => 90000,
                 'max_price' => 180000,
@@ -324,11 +298,6 @@ final class AccomodationSeeder extends Seeder
                     'WiFi Gratis',
                     'Toilet & Kamar Mandi Bersama',
                     'Loker Penyimpanan Barang',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/271618/pexels-photo-271618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1001965/pexels-photo-1001965.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/2119714/pexels-photo-2119714.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
@@ -358,7 +327,7 @@ final class AccomodationSeeder extends Seeder
                 'title' => 'Bungalow Sunrise Paloh',
                 'description' => 'Bungalow tepi pantai dengan orientasi menghadap timur, menawarkan pengalaman menikmati matahari terbit langsung dari tempat tidur.',
                 'full_description' => 'Bungalow Sunrise Paloh dirancang khusus dengan orientasi menghadap ke arah timur, sehingga tamu dapat menikmati matahari terbit yang spektakuler langsung dari jendela kamar atau teras depan bungalow. Setiap unit dibangun dari bahan semi-permanen yang menyejukkan, terletak hanya 30 meter dari bibir pantai. Suara ombak menjadi teman tidur yang menenangkan setiap malam. Pengelola juga menyediakan paket wisata lokal termasuk trip ke Tugu Perbatasan Indonesia-Malaysia dan snorkeling di perairan dangkal Temajuk.',
-                'image_url' => 'https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                'image' => 'https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 'category' => 'bungalow',
                 'min_price' => 280000,
                 'max_price' => 550000,
@@ -374,11 +343,6 @@ final class AccomodationSeeder extends Seeder
                     'Parkir Motor & Mobil',
                     'Paket Wisata Lokal',
                     'Area BBQ',
-                ],
-                'gallery' => [
-                    'https://images.pexels.com/photos/1802255/pexels-photo-1802255.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                 ],
                 'room_types' => [
                     [
