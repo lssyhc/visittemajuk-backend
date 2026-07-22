@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,6 +35,12 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureCommands();
         $this->configureRateLimiting();
+        $this->configureGates();
+    }
+
+    private function configureGates(): void
+    {
+        Gate::define('view', static fn (?User $authenticated, User $user): bool => $authenticated?->id === $user->id);
     }
 
     private function configureModels(): void
