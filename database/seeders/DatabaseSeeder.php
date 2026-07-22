@@ -27,6 +27,8 @@ final class DatabaseSeeder extends Seeder
         );
 
         $this->call(DestinationSeeder::class);
-        // $this->call(AccomodationSeeder::class);
+        $this->call(AccomodationSeeder::class);
+        $this->call(SiteSettingsSeeder::class);
+        $this->call(FooterSocialSeeder::class);
     }
 }
