@@ -118,7 +118,7 @@ final class CulinaryController extends Controller
         }
 
         return $query
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->with('specialties:id,menu,culinary_id', 'culinaryGalleries:id,image,culinary_id')
             ->paginate($request->perPage())
             ->withQueryString();

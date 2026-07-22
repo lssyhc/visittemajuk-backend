@@ -115,7 +115,7 @@ final class TransportationController extends Controller
         }
 
         return $query
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->with('steps:id,description,cost,duration,vehicle,transportation_id', 'tips:id,tip,transportation_id')
             ->paginate($request->perPage())
             ->withQueryString();
