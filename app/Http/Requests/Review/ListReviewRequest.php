@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Review;
 
+use App\Models\Destination;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class ListReviewRequest extends FormRequest
@@ -21,7 +22,7 @@ final class ListReviewRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:255'],
-            'destination' => ['nullable', 'integer', 'max:255'],
+            'destination' => ['nullable', 'string', 'max:255'],
             'rate' => ['nullable', 'integer'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_PER_PAGE],
@@ -45,11 +46,15 @@ final class ListReviewRequest extends FormRequest
     {
         $value = $this->validated('destination');
 
-        if (! is_numeric($value)) {
+        if (! is_string($value) || $value === '') {
             return 0;
         }
 
-        return (int) $value;
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        return (int) (Destination::query()->where('slug', $value)->value('id') ?? 0);
     }
 
     public function rate(): int
