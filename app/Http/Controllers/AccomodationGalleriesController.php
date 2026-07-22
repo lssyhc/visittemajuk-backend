@@ -35,10 +35,12 @@ final class AccomodationGalleriesController extends Controller
      */
     public function show(AccomodationGalleries $accomodationGalleries): JsonResponse
     {
-        $accomodationGalleries = AccomodationGalleries::where('accomodation_id', $accomodationGalleries->id)->get();
+        $galleries = AccomodationGalleries::query()
+            ->where('accomodation_id', $accomodationGalleries->accomodation_id)
+            ->get();
 
         return $this->successResponse(
-            data: AccomodationGalleriesResource::collection($accomodationGalleries),
+            data: AccomodationGalleriesResource::collection($galleries),
         );
     }
 

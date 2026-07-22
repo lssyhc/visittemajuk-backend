@@ -6,7 +6,7 @@ namespace App\Http\Requests\Accomodation;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class SaveAccomodationRequest extends FormRequest
+final class UpdateAccomodationRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,15 +15,11 @@ final class SaveAccomodationRequest extends FormRequest
 
     public function rules(): array
     {
-        $image = $this->hasFile('image')
-            ? 'required|image|mimes:jpg,jpeg,webp|max:1024'
-            : 'required|string|max:255';
-
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'fullDescription' => ['required', 'string'],
-            'image' => $image,
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,webp', 'max:1024'],
             'category' => ['required', 'string', 'in:resort,wisma,bungalow,homestay,villa'],
             'minPrice' => ['required', 'numeric', 'min:0'],
             'maxPrice' => ['required', 'numeric', 'min:0'],
@@ -58,7 +54,6 @@ final class SaveAccomodationRequest extends FormRequest
      *     title: string,
      *     description: string,
      *     full_description: string,
-     *     image: string,
      *     category: string,
      *     min_price: string,
      *     max_price: string,
@@ -77,7 +72,6 @@ final class SaveAccomodationRequest extends FormRequest
             'title' => (string) $validated['title'],
             'description' => (string) $validated['description'],
             'full_description' => (string) $validated['fullDescription'],
-            'image' => (string) $validated['image'],
             'category' => (string) $validated['category'],
             'min_price' => (string) $validated['minPrice'],
             'max_price' => (string) $validated['maxPrice'],

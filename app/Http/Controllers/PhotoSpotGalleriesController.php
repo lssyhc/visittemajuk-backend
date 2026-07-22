@@ -35,10 +35,12 @@ final class PhotoSpotGalleriesController extends Controller
      */
     public function show(PhotoSpotGalleries $photoSpotGalleries): JsonResponse
     {
-        $photoSpotGalleries = PhotoSpotGalleries::where('photo_spot_id', $photoSpotGalleries->id)->get();
+        $galleries = PhotoSpotGalleries::query()
+            ->where('photo_spot_id', $photoSpotGalleries->photo_spot_id)
+            ->get();
 
         return $this->successResponse(
-            data: PhotoSpotGalleriesResource::collection($photoSpotGalleries),
+            data: PhotoSpotGalleriesResource::collection($galleries),
         );
     }
 
