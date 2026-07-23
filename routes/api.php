@@ -27,7 +27,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->as('auth.')->group(function () {
-    Route::post('/login', LoginController::class)->middleware('throttle:5,1')->name('login');
+    Route::post('/login', LoginController::class)->middleware('throttle:login')->name('login');
     Route::post('/logout', LogoutController::class)->middleware('auth:sanctum')->name('logout');
     Route::post('/refresh', RefreshTokenController::class)->middleware(['auth:sanctum', 'ability:api:access'])->name('refresh');
     Route::put('/password', ChangePasswordController::class)
@@ -121,7 +121,7 @@ Route::get('/destinations/{destination:slug}', [DestinationController::class, 's
 Route::get('/culinaries', [CulinaryController::class, 'index']);
 Route::get('/culinaries/{culinary}', [CulinaryController::class, 'show']);
 Route::get('/reviews', [ReviewController::class, 'index']);
-Route::post('/reviews', [ReviewController::class, 'store']);
+Route::post('/reviews', [ReviewController::class, 'store'])->middleware('throttle:reviews');
 Route::get('/accomodations', [AccomodationController::class, 'index'])->name('accomodations.index');
 Route::get('/accomodations/{accomodation:slug}', [AccomodationController::class, 'show'])->name('accomodations.show');
 Route::get('/transportations', [TransportationController::class, 'index']);
