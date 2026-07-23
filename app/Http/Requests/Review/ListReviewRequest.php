@@ -6,6 +6,7 @@ namespace App\Http\Requests\Review;
 
 use App\Models\Destination;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 final class ListReviewRequest extends FormRequest
 {
@@ -54,7 +55,15 @@ final class ListReviewRequest extends FormRequest
             return (int) $value;
         }
 
-        return (int) (Destination::query()->where('slug', $value)->value('id') ?? 0);
+        $destinationId = Destination::query()->where('slug', $value)->value('id');
+
+        if ($destinationId === null) {
+            throw ValidationException::withMessages([
+                'destination' => ['Destinasi tidak ditemukan.'],
+            ]);
+        }
+
+        return (int) $destinationId;
     }
 
     public function rate(): int
