@@ -17,7 +17,7 @@ final class SaveSpecialtyRequest extends FormRequest
     {
         return [
             'menu' => ['required', 'string'],
-            'culinary_id' => ['required', 'integer'],
+            'culinary_id' => ['required', 'integer', 'exists:culinaries,id'],
         ];
     }
 

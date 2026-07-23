@@ -17,7 +17,7 @@ final class SaveTransportationTipsRequest extends FormRequest
     {
         return [
             'tip' => ['required', 'string', 'max:255'],
-            'transportation_id' => ['required', 'integer'],
+            'transportation_id' => ['required', 'integer', 'exists:transportations,id'],
         ];
     }
 
