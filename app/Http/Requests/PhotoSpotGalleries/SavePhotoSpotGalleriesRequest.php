@@ -19,7 +19,7 @@ final class SavePhotoSpotGalleriesRequest extends FormRequest
 
         return [
             'image' => $image,
-            'photo_spot_id' => ['required', 'integer'],
+            'photo_spot_id' => ['required', 'integer', 'exists:photo_spots,id'],
         ];
     }
 
