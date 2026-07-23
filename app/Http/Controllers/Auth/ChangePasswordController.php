@@ -26,6 +26,7 @@ final class ChangePasswordController extends Controller
 
         $user->password = (string) $request->validated('password');
         $user->save();
+        $user->tokens()->delete();
 
         return $this->successResponse(
             message: 'Password berhasil diperbarui.',
