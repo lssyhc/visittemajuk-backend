@@ -19,7 +19,7 @@ final class SaveTransportationStepsRequest extends FormRequest
             'description' => ['required', 'string', 'max:255'],
             'duration' => ['required', 'string', 'max:255'],
             'cost' => ['required', 'string', 'max:255'],
-            'transportation_id' => ['required', 'integer'],
+            'transportation_id' => ['required', 'integer', 'exists:transportations,id'],
             'vehicle' => ['required', 'string', 'max:255'],
         ];
     }

@@ -19,7 +19,9 @@ final class AccomodationGalleriesController extends Controller
     public function store(SaveAccomodationGalleriesRequest $request): JsonResponse
     {
         $accomodationGalleries = $request->accomodationGalleriesAttributes();
-        $accomodationGalleries['image'] = $request->file('image')->store('accomodations/galleries', 'public');
+        $accomodationGalleries['image'] = $request->hasFile('image')
+            ? $request->file('image')->store('accomodations/galleries', 'public')
+            : $accomodationGalleries['image'];
 
         $gallery = AccomodationGalleries::query()->create($accomodationGalleries);
 

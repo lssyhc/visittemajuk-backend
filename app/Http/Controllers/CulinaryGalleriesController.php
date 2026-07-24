@@ -19,7 +19,9 @@ final class CulinaryGalleriesController extends Controller
     public function store(SaveCulinaryGalleriesRequest $request): JsonResponse
     {
         $culinaryGalleries = $request->culinaryGalleriesAttributes();
-        $culinaryGalleries['image'] = $request->file('image')->store('culinaries/galleries', 'public');
+        $culinaryGalleries['image'] = $request->hasFile('image')
+            ? $request->file('image')->store('culinaries/galleries', 'public')
+            : $culinaryGalleries['image'];
 
         $culinary = CulinaryGalleries::query()->create($culinaryGalleries);
 

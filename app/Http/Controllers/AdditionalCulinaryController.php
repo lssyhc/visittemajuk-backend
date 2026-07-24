@@ -90,7 +90,7 @@ final class AdditionalCulinaryController extends Controller
         return $this->successResponse(
             data: new AdditionalCulinaryResource($additonalCulinary->refresh()),
             message : 'Kuliner khas berhasil diperbarui',
-            status: Response::HTTP_CREATED,
+            status: Response::HTTP_OK,
         );
     }
 

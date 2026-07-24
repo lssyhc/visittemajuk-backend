@@ -78,7 +78,14 @@ return Application::configure(basePath: dirname(__DIR__))
                     default => 'Terjadi kesalahan.',
                 };
 
-                return ApiResponse::error($message, $statusCode);
+                $response = ApiResponse::error($message, $statusCode);
+
+                if ($statusCode === Response::HTTP_TOO_MANY_REQUESTS) {
+                    $retryAfter = $e->getHeaders()['Retry-After'] ?? 60;
+                    $response->headers->set('Retry-After', (string) $retryAfter);
+                }
+
+                return $response;
             }
 
             return null;
