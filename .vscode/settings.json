@@ -57,5 +57,6 @@
     "intelephense.environment.phpVersion": "8.3.0",
     "intelephense.telemetry.enabled": false,
 
-    "php.validate.executablePath": "php"
+    "php.validate.executablePath": "php",
+    "window.zoomLevel": 1
 }

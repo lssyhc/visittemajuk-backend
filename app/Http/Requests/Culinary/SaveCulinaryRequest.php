@@ -25,7 +25,7 @@ final class SaveCulinaryRequest extends FormRequest
             'category' => ['required', 'string', 'max:255'],
             'price' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string'],
-            'location_map' => ['required', 'string'],
+            'location_map' => ['nullable', 'string'],
             'open_hours' => ['required', 'string', 'max:255'],
             'contact' => ['required', 'string'],
         ];
