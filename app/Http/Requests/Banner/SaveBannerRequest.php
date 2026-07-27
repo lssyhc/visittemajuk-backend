@@ -29,7 +29,7 @@ final class SaveBannerRequest extends FormRequest
      * @return array{
      *     title : string,
      *     description: string,
-     *     menu: string
+     *     menu: string,
      *     image: string
      * }
      */
