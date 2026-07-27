@@ -16,8 +16,8 @@ final class SaveSpecialtyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'menu' => ['required', 'string'],
-            'culinary_id' => ['required', 'integer', 'exists:culinaries,id'],
+            'menu' => ['required', 'string', 'max:255'],
+            'culinary_id' => ['required', 'integer'],
         ];
     }
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RefreshTokenController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CulinaryController;
 use App\Http\Controllers\CulinaryGalleriesController;
 use App\Http\Controllers\DestinationController;
@@ -110,6 +111,11 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::put('/additionalInformation/{additionalInformation:id}', [AdditionalInformationController::class, 'update']);
     Route::get('/additionalInformation/{additionalInformation:id}', [AdditionalInformationController::class, 'show']);
     Route::delete('/additionalInformation/{additionalInformation:id}', [AdditionalInformationController::class, 'destroy']);
+
+    Route::post('/banners', [BannerController::class, 'store']);
+    Route::post('/banners/{banner:id}', [BannerController::class, 'update']);
+    Route::delete('/banners/{banner:id}', [BannerController::class, 'destroy']);
+
 });
 
 Route::get('/site/settings', [SiteSettingsController::class, 'show'])->name('site.settings.show');
@@ -130,3 +136,4 @@ Route::get('/additionalCulinaries', [AdditionalCulinaryController::class, 'index
 Route::get('/additionalInformation', [AdditionalInformationController::class, 'index']);
 Route::get('/photoSpots', [PhotoSpotController::class, 'index']);
 Route::get('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'show']);
+Route::get('/banners', [BannerController::class, 'index']);
