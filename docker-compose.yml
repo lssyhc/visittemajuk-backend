@@ -74,8 +74,11 @@ services:
       - ./:/workspace
       - composer-cache:/tmp/composer
       - npm-cache:/root/.npm
+      - /workspace/vendor
+      - /workspace/node_modules
     environment:
       APP_ENV: testing
+      APP_DEBUG: "true"
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306
@@ -85,6 +88,7 @@ services:
       CACHE_STORE: array
       QUEUE_CONNECTION: sync
       SESSION_DRIVER: array
+      DOCKER_CONTAINER: "true"
     depends_on:
       db:
         condition: service_healthy
@@ -117,7 +121,7 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db-data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro

@@ -19,7 +19,7 @@ How to use the `Dockerfile` and `docker-compose.yml` at the root. The goal is th
 
 - Docker Engine 24+
 - Docker Compose v2 (`docker compose`, no dash)
-- Ports 3306 (MySQL) and 8000 (Laravel) free on the host. Change the mappings in `docker-compose.yml` if they collide.
+- Ports 3307 (MySQL) and 8000 (Laravel) free on the host. Change the mappings in `docker-compose.yml` if they collide.
 
 ## Services
 
@@ -150,7 +150,7 @@ docker volume rm visittemajuk-backend_db-data
 
 ## Troubleshooting
 
-- **Port 3306 collides with a host MySQL.** Stop the host service, or change `ports: - "3306:3306"` to `"3307:3306"` in `docker-compose.yml`.
+- **Port 3307 collides with another host service.** The MySQL port is mapped to `3307` on the host by default to avoid conflicts with a local MySQL on `3306`. If `3307` is also taken, change `ports: - "3307:3306"` to a different host port in `docker-compose.yml` (the container port stays `3306`).
 - **`APP_KEY` is empty in the container.** The entrypoint will run `key:generate` automatically. To force a regeneration, delete `APP_KEY` from `.env` and restart: `docker compose restart app`.
 - **Storage permissions.** The Dockerfile runs `chown -R www-data:www-data storage bootstrap/cache` at build time, so a freshly built image has the right ownership baked in. If you delete and recreate only the container (without rebuilding), those directories keep their in-image permissions and writes still work. To run as your host UID instead, override the user at compose time: `docker compose run --user "$(id -u):$(id -g)" app bash`.
 - **Composer cache not shared across image rebuilds.** The `composer-cache` volume mounts at `/tmp/composer` at container start, so within a long-lived container (or across `docker compose up` cycles of the same image) packages aren't re-downloaded. But every `docker compose build` re-runs `composer install` and downloads fresh, because named volumes don't attach during image build. To speed up rebuilds, keep lockfiles (`composer.lock`, `package-lock.json`) committed so the install is deterministic.
