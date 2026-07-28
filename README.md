@@ -1,33 +1,56 @@
 # Visit Temajuk Backend
 
-Visit Temajuk Backend is a Laravel API for the Visit Temajuk tourism website. The backend serves dynamic tourism content for a React frontend and provides authenticated administration workflows for managing that content.
+Laravel API for the Visit Temajuk tourism site. It serves the React frontend and backs the admin workflows for managing tourism content.
 
-The project follows standard Laravel MVC conventions. Keep domain code in controllers, form requests, resources, models, policies, migrations, factories, and seeders until repeated complexity proves that another layer is needed.
+Code stays in controllers, form requests, resources, models, policies, migrations, factories, and seeders — the usual Laravel layers. Only add a new layer (Actions, DTOs, Services, etc.) when a real duplication or complexity shows up.
 
 ## Requirements
 
-- PHP 8.3 or newer
-- Composer 2
-- Node.js 24 and npm for Git hooks and documentation/config formatting
-- MySQL 8 or a compatible MySQL database
-- Git
+- PHP 8.3+ with `mbstring`, `dom`, `fileinfo`, `pdo_mysql`, `bcmath`, `curl`, `openssl`, `tokenizer`, `xml`, `intl`, `gd` (the `Dockerfile` installs both — `intl` for Laravel's locale-aware date formatting, `gd` baked in for any future image processing)
+- Composer 2 (https://getcomposer.org/download/)
+- Node.js 24, npm 10+ (for Git hooks and formatting)
+- MySQL 8.0+ (or a compatible fork)
+- Git 2.30+ (https://git-scm.com/downloads)
+- Docker 24+ and Compose v2 (optional, for the containerised toolchain — see `docs/docker.md`)
 
-Laravel 13 requires PHP 8.3 or newer. Composer also resolves the lock file against PHP 8.3 through `config.platform.php` so dependency updates remain compatible with the minimum supported runtime.
+Laravel 13 needs PHP 8.3 minimum. The lock file is pinned to 8.3 via `config.platform.php`, so `composer install` won't pull in packages that need newer PHP.
+
+More: [Laravel 13 requirements](https://laravel.com/docs/13.x/deployment#server-requirements), [Composer platform config](https://getcomposer.org/doc/06-config.md#platform).
 
 ## Stack
 
-- Laravel 13
-- Laravel Sanctum token authentication
-- MySQL
-- Pest
-- Laravel Pint
-- Larastan / PHPStan level 5
-- Husky, lint-staged, Commitlint
-- Prettier for Markdown, JSON, and workflow formatting
+- [Laravel 13](https://laravel.com/docs/13.x)
+- [Laravel Sanctum 4](https://laravel.com/docs/13.x/sanctum) for token auth
+- MySQL 8
+- [Pest 4](https://pestphp.com/docs)
+- [Laravel Pint 1](https://laravel.com/docs/13.x/pint)
+- [Larastan](https://larastan.laravelshift.com/) / [PHPStan](https://phpstan.org/) at level 5
+- Husky 9, lint-staged 17, Commitlint 21 (Conventional Commits)
+- Prettier 3 for Markdown, JSON, JS, and GitHub workflow files
 
 ## Setup
 
-Install PHP dependencies and prepare the Laravel application:
+Run these in order. Skipping a step usually breaks the next one.
+
+### 1. Clone
+
+```bash
+git clone <repository-url> visittemajuk-backend
+cd visittemajuk-backend
+```
+
+### 2. Create the local database
+
+```sql
+CREATE DATABASE visittemajuk CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'visittemajuk'@'127.0.0.1' IDENTIFIED BY 'change-me';
+GRANT ALL PRIVILEGES ON visittemajuk.* TO 'visittemajuk'@'127.0.0.1';
+FLUSH PRIVILEGES;
+```
+
+Default DB name is `visittemajuk` (see `.env.example`). The test DB is `visittemajuk_test` (see `phpunit.xml`).
+
+### 3. Install PHP deps and bootstrap Laravel
 
 ```bash
 composer install
@@ -37,28 +60,72 @@ php artisan migrate
 php artisan storage:link
 ```
 
-Install Node dependencies for Git hooks and non-PHP formatting:
+`storage:link` exposes `storage/app/public` under `public/storage` so uploaded media is reachable from the web.
+
+### 4. Bootstrap the testing environment
+
+`.env.testing` is git-ignored because it carries a real `APP_KEY`, and that key differs across developers and CI runs. The committed template is `.env.testing.example`.
+
+`composer test` copies the template into `.env.testing` automatically on first run when running natively on the host (see `scripts/run-tests.php`). Inside Docker, the `tools` container receives its environment from `docker-compose.yml` instead. The manual setup below is only needed if you want to run `php artisan` commands against the testing environment yourself:
+
+```bash
+cp .env.testing.example .env.testing
+KEY="base64:$(openssl rand -base64 32)"
+sed -i "s|^APP_KEY=.*|APP_KEY=${KEY}|" .env.testing
+```
+
+The first command copies the template (placeholder `APP_KEY=`) into your local `.env.testing`. The next two commands write a fresh `APP_KEY` into it via `openssl` + `sed` because `php artisan key:generate --env=testing --force` looks for `.env` (not `.env.testing`) and silently fails when it's missing.
+
+`composer test` also needs the `visittemajuk_test` MySQL database. The Docker toolchain creates it on first run (see `docker/mysql/init/01-test-db.sql`). Outside Docker, create it manually. The test config (`phpunit.xml`) connects as MySQL `root`, so the database just needs to exist with default permissions:
+
+```sql
+CREATE DATABASE IF NOT EXISTS visittemajuk_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+If your local MySQL doesn't allow `root` to connect over TCP, override the test DB credentials in a new `.env.testing` block or in `phpunit.xml`.
+
+### 5. Install Node deps (Git hooks and formatters)
 
 ```bash
 npm install
 ```
 
-The `composer setup` script can run the Laravel setup sequence for a fresh local checkout.
+This also triggers Husky to install `pre-commit`, `commit-msg`, and `pre-push` hooks (see `.husky/`).
+
+### 6. (Optional) One-shot script
+
+```bash
+composer setup
+```
+
+Runs the Laravel setup sequence: install, copy `.env.example` if missing, generate key, migrate, link storage.
+
+### 7. Verify
+
+```bash
+php artisan --version
+php artisan route:list --path=api
+composer quality
+```
+
+If `composer quality` passes, your local toolchain matches CI.
 
 ## Environment
 
-`.env.example` is the local development template. Important defaults:
+`.env.example` is the dev template. Worth knowing:
 
-| Variable          | Default                                       | Purpose                                         |
-| ----------------- | --------------------------------------------- | ----------------------------------------------- |
-| `APP_NAME`        | `Visit Temajuk`                               | Application display name                        |
-| `APP_LOCALE`      | `id`                                          | Indonesian localization                         |
-| `DB_CONNECTION`   | `mysql`                                       | Default database driver                         |
-| `DB_DATABASE`     | `visittemajuk`                                | Local development database name                 |
-| `FILESYSTEM_DISK` | `public`                                      | Public media storage for tourism content        |
-| `FRONTEND_URLS`   | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated React frontend origins for CORS |
+| Variable          | Default                                       | What it does                  |
+| ----------------- | --------------------------------------------- | ----------------------------- |
+| `APP_NAME`        | `Visit Temajuk`                               | Display name                  |
+| `APP_LOCALE`      | `id`                                          | Default locale                |
+| `DB_CONNECTION`   | `mysql`                                       | Database driver               |
+| `DB_DATABASE`     | `visittemajuk`                                | Local DB name                 |
+| `FILESYSTEM_DISK` | `public`                                      | Public disk for tourism media |
+| `FRONTEND_URLS`   | `http://localhost:5173,http://127.0.0.1:5173` | Allowed origins for CORS      |
 
-Never commit real `.env` files, credentials, API keys, production database dumps, or deployment secrets.
+`SANCTUM_STATEFUL_DOMAINS` and `SANCTUM_TOKEN_EXPIRATION` control SPA and bearer token behaviour. Don't commit real `.env` files, credentials, API keys, prod DB dumps, or any deployment secret.
+
+`.env.testing` is git-ignored. The committed template is `.env.testing.example`; copy it to `.env.testing` and generate a fresh `APP_KEY` before running tests locally (see step 4 in [Setup](#setup)). The template points at `visittemajuk_test`.
 
 ## Development
 
@@ -66,35 +133,45 @@ Never commit real `.env` files, credentials, API keys, production database dumps
 composer dev
 ```
 
-This starts the Laravel development server and queue listener. On non-Windows systems it also starts Laravel Pail for log tailing.
+Starts the Laravel dev server, queue listener, and (on non-Windows) Laravel Pail for log tailing. `scripts/dev.mjs` supervises the children and forwards `SIGINT`/`SIGTERM`.
 
-Useful focused commands:
+Handy commands:
 
-| Command                     | Purpose                                 |
-| --------------------------- | --------------------------------------- |
-| `composer dev:server`       | Run only the Laravel development server |
-| `php artisan migrate`       | Apply migrations                        |
-| `php artisan migrate:fresh` | Rebuild the local schema                |
-| `php artisan storage:link`  | Link public storage for uploaded media  |
+| Command                       | What it does                     |
+| ----------------------------- | -------------------------------- |
+| `composer dev:server`         | Just the dev server              |
+| `php artisan migrate`         | Apply migrations                 |
+| `php artisan migrate:fresh`   | Rebuild the local schema         |
+| `php artisan storage:link`    | Link public storage              |
+| `php artisan route:list`      | List all registered routes       |
+| `php artisan tinker`          | Open an interactive REPL         |
+| `composer migrate:test`       | Migrate the test DB              |
+| `composer migrate:fresh:test` | Rebuild the test DB from scratch |
 
 ## Quality
 
-| Command                 | Purpose                                          |
-| ----------------------- | ------------------------------------------------ |
-| `composer test`         | Clear config cache and run Pest against MySQL    |
-| `composer format`       | Format PHP with Laravel Pint                     |
-| `composer format:check` | Check PHP formatting                             |
-| `composer analyse`      | Run Larastan / PHPStan                           |
-| `composer quality`      | Run Pint check, PHPStan, and Pest                |
-| `npm run format`        | Format Markdown, JSON, and GitHub workflow files |
-| `npm run format:check`  | Check non-PHP formatting                         |
+| Command                        | What it does                                                         |
+| ------------------------------ | -------------------------------------------------------------------- |
+| `composer test`                | Clear config cache, run Pest against MySQL                           |
+| `composer format`              | Format PHP with Pint                                                 |
+| `composer format:check`        | Check PHP formatting                                                 |
+| `composer analyse`             | Run Larastan / PHPStan                                               |
+| `composer quality`             | Pint check + PHPStan + Pest                                          |
+| `composer audit`               | Run `composer audit` (security advisories + abandoned packages)      |
+| `composer audit --locked`      | Audit `composer.lock` directly without writing to the lockfile first |
+| `composer audit --format=json` | Same audit, machine-readable output                                  |
+| `composer audit --no-dev`      | Audit only runtime dependencies                                      |
+| `npm run format`               | Format MD/JSON/JS/Workflow files via Prettier                        |
+| `npm run format:check`         | Check non-PHP formatting                                             |
 
-Run these before opening a pull request:
+Before opening a PR:
 
 ```bash
 composer quality
 npm run format:check
 ```
+
+PHPStan config is in `phpstan.neon` (level 5, Larastan extension). PHP style is in `pint.json` (Laravel preset, alphabetical imports, `declare_strict_types=1`). See `docs/phpstan.md` for the level 5 rule set.
 
 ## Project Structure
 
@@ -114,6 +191,10 @@ database/
   factories/          Model factories
   migrations/         Database schema
   seeders/            Seed entry points
+docs/                 Team docs
+  docker.md           Docker toolchain
+  git-workflow.md     Branching and PR guide
+  phpstan.md          PHPStan level 5 rules
 routes/
   api.php             API routes
   console.php         Console routes
@@ -123,33 +204,33 @@ tests/
   Unit/               Focused unit tests
 ```
 
-Do not add `Actions`, `DTOs`, `Services`, `Repositories`, or similar architecture folders by default. Add a new layer only when it removes proven duplication or isolates real complexity.
+Skip `Actions`, `DTOs`, `Services`, `Repositories`, and similar layers until they pay for themselves. Add one only when it removes real duplication or isolates real complexity.
 
 ## API Authentication
 
 All API routes are served under `/api`.
 
-Public endpoint:
+Public:
 
-| Method | Path          | Purpose                                                     |
-| ------ | ------------- | ----------------------------------------------------------- |
-| `POST` | `/auth/login` | Authenticate an admin user and issue a Sanctum bearer token |
+| Method | Path          | What it does                                 |
+| ------ | ------------- | -------------------------------------------- |
+| `POST` | `/auth/login` | Authenticate an admin, issue a Sanctum token |
 
-Authenticated endpoints:
+Authenticated:
 
-| Method | Path            | Purpose                               |
-| ------ | --------------- | ------------------------------------- |
-| `POST` | `/auth/logout`  | Revoke the current token              |
-| `POST` | `/auth/refresh` | Rotate the current token              |
-| `GET`  | `/user`         | Return the authenticated user profile |
+| Method | Path            | What it does                  |
+| ------ | --------------- | ----------------------------- |
+| `POST` | `/auth/logout`  | Revoke the current token      |
+| `POST` | `/auth/refresh` | Rotate the current token      |
+| `GET`  | `/user`         | Return the authenticated user |
 
-Public account registration is intentionally not exposed. Admin account provisioning should stay under a controlled operational workflow or an approved authenticated admin flow.
+Public registration is intentionally not exposed. Admin accounts are provisioned through a controlled operational workflow or an approved admin flow.
 
-Login and refresh responses issue Sanctum personal access tokens with the `api:access` ability. Protected API routes that return or rotate admin session data require that ability in addition to `auth:sanctum`. Logout only requires a valid Sanctum token so a limited token can still revoke itself without being upgraded.
+Login and refresh issue Sanctum personal access tokens with the `api:access` ability. Endpoints that return or rotate admin data also need that ability on top of `auth:sanctum`. Logout only needs a valid Sanctum token, so a limited token can still revoke itself.
 
 ## API Responses
 
-Use `App\Http\Responses\ApiResponse` directly for framework-level rendering and the base controller helpers for controller actions. Success responses use this envelope:
+Use `App\Http\Responses\ApiResponse` for framework-level rendering and the base controller helpers inside controller actions. Success:
 
 ```json
 {
@@ -159,7 +240,7 @@ Use `App\Http\Responses\ApiResponse` directly for framework-level rendering and 
 }
 ```
 
-Error responses use this envelope:
+Error:
 
 ```json
 {
@@ -169,28 +250,45 @@ Error responses use this envelope:
 }
 ```
 
-`errors` is `null` when an error has no field or detail payload. `meta` is optional for pagination or response metadata. Keep all external API `message` values in Indonesian. Validation errors keep Laravel's field-keyed error bag inside `errors` so frontend forms can bind messages directly to fields while every endpoint still has the same top-level response shape.
+`errors` is `null` when there's no field or detail payload. `meta` is optional (for pagination, etc.). All external API `message` values stay in Indonesian. Validation errors keep Laravel's field-keyed bag inside `errors`, so frontend forms can bind messages to fields while every endpoint still shares the same top-level shape.
 
 ## Content Development
 
-Visit Temajuk content is managed by admins and consumed by the React frontend. New content domains should use Laravel resource-oriented conventions:
+Visit Temajuk content is managed by admins and consumed by the React frontend. New content domains should follow the usual Laravel resource-oriented flow:
 
-- migrations define the database schema,
-- models own relationships and casts,
-- form requests validate input,
-- controllers expose CRUD endpoints,
-- resources shape JSON responses,
-- policies protect admin operations,
-- feature tests cover the HTTP contract.
+- migrations for the schema,
+- models for relationships and casts,
+- form requests for input validation,
+- controllers for CRUD endpoints,
+- resources for JSON shape,
+- policies for authorisation,
+- feature tests for the HTTP contract.
 
-Avoid seeding authored website content unless the team has approved it as system data or fixture data.
+Skip seeding authored website content unless it's approved as system or fixture data.
 
 ## Git Hooks And CI
 
-Husky hooks are installed by `npm install`.
+Husky hooks are installed by `npm install` (via the `prepare` script):
 
-- `pre-commit`: runs lint-staged.
+- `pre-commit`: runs lint-staged — Pint for `*.php`, Prettier for `*.json`, `*.md`, `*.js`, `scripts/**/*.mjs`, and `.github/**/*.{yml,yaml,md}`.
 - `commit-msg`: validates Conventional Commit messages.
-- `pre-push`: runs backend quality checks and non-PHP formatting checks.
+- `pre-push`: runs `composer quality` and `npm run format:check`. When Docker Compose is available (the `db` service is running), it auto-routes the checks through the `tools` container so every teammate runs the quality gate in the same environment regardless of their local PHP/MySQL setup.
 
-GitHub Actions run backend quality checks, commit message validation, Composer audit, and dependency review.
+See `docs/git-workflow.md` for the full branching model, commit format, and PR checklist.
+
+GitHub Actions: `ci.yml` (quality), `commitlint.yml` (commit message validation on PRs), `dependency-review.yml` (Composer audit + dependency review), `code-scanning.yml` (Semgrep SAST).
+
+## Documentation
+
+- [docs/docker.md](docs/docker.md) — Containerised toolchain setup.
+- [docs/git-workflow.md](docs/git-workflow.md) — Branching, commit format, PR process.
+- [docs/phpstan.md](docs/phpstan.md) — PHPStan level 5 rules with examples.
+
+## References
+
+- Laravel 13: https://laravel.com/docs/13.x
+- PHPStan: https://phpstan.org/user-guide/getting-started
+- Larastan: https://larastan.laravelshift.com/
+- Pest: https://pestphp.com/docs/installation
+- Conventional Commits: https://www.conventionalcommits.org/en/v1.0.0/
+- Docker: https://docs.docker.com/

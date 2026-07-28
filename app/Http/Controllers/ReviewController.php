@@ -29,14 +29,6 @@ final class ReviewController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(SaveReviewRequest $request)
@@ -78,7 +70,7 @@ final class ReviewController extends Controller
         }
 
         return $query
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->with('destination:id,title')
             ->paginate($request->perPage())
             ->withQueryString();

@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('destinations', function (Blueprint $table) {
@@ -19,24 +16,30 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->longText('full_description');
-            $table->string('image_url', 2048);
+            $table->string('image', 2048)->nullable();
             $table->string('category');
             $table->string('price');
             $table->text('location');
+            $table->string('location_map', 512)->nullable();
             $table->string('open_hours');
             $table->json('facilities');
             $table->json('activities');
             $table->json('tips');
-            $table->json('gallery');
+            $table->timestamps();
+        });
+
+        Schema::create('destination_galleries', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('destination_id')->constrained('destinations')->cascadeOnDelete();
+            $table->string('image', 2048);
+            $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
+        Schema::dropIfExists('destination_galleries');
         Schema::dropIfExists('destinations');
     }
 };

@@ -45,7 +45,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
-          extensions: mbstring, dom, fileinfo, pdo_mysql
+          extensions: mbstring, dom, fileinfo, pdo_mysql, gd
           coverage: none
 
       - name: Setup Node.js
@@ -62,8 +62,9 @@ jobs:
 
       - name: Prepare Environment
         run: |
-          cp .env.testing .env
-          php artisan key:generate
+          cp .env.testing.example .env.testing
+          KEY="base64:$(openssl rand -base64 32)"
+          sed -i "s|^APP_KEY=.*|APP_KEY=${KEY}|" .env.testing
           php artisan migrate --force --ansi
 
       - name: Run Laravel Pint check

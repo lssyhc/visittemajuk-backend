@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PhotoSpot\ListPhotoSpotRequest;
 use App\Http\Requests\PhotoSpot\SavePhotoSpotRequest;
+use App\Http\Requests\PhotoSpot\UpdatePhotoSpotRequest;
 use App\Http\Resources\PhotoSpotResource;
 use App\Models\PhotoSpot;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,16 +75,19 @@ final class PhotoSpotController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SavePhotoSpotRequest $request, PhotoSpot $photoSpot): JsonResponse
+    public function update(UpdatePhotoSpotRequest $request, PhotoSpot $photoSpot): JsonResponse
     {
         $updatePhotoSpot = PhotoSpot::findOrFail($photoSpot->id);
         $updatePhotoSpotData = $request->photoSpotAttributes();
         $updatePhotoSpotData['slug'] = Str::slug($updatePhotoSpotData['title']);
 
-        if ($request->hasFile('image') && $updatePhotoSpot['image'] != $request->image) {
-            Storage::disk('public')->delete($updatePhotoSpot['image']);
+        if ($request->hasFile('image')) {
+            Storage::disk('public')->delete($updatePhotoSpot->image);
             $updatePhotoSpotData['image'] = $request->file('image')->store('photospots', 'public');
+        } else {
+            $updatePhotoSpotData['image'] = $updatePhotoSpot->image;
         }
+
         $updatePhotoSpot->update($updatePhotoSpotData);
 
         return $this->successResponse(
@@ -114,10 +118,10 @@ final class PhotoSpotController extends Controller
 
         if ($search !== null) {
             $query->where(function (Builder $query) use ($search, $searchDescription): void {
-                $query->where('title', 'like', '%' . $search . '%');
+                $query->where('title', 'like', '%'.$search.'%');
 
                 if ($searchDescription) {
-                    $query->orWhere('description', 'like', '%' . $search . '%');
+                    $query->orWhere('description', 'like', '%'.$search.'%');
                 }
             });
         }
@@ -127,7 +131,7 @@ final class PhotoSpotController extends Controller
         }
 
         return $query
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->with('photoSpotGalleries:id,image,photo_spot_id')
             ->paginate($request->perPage())
             ->withQueryString();

@@ -25,13 +25,13 @@ describe('Destination seed data', function () {
             'price' => 'Rp 20.000',
         ]);
 
-        $response = $this->getJson('/api/destinations?per_page=50')
-            ->assertOk();
+        $response = $this->getJson('/api/destinations?per_page=50')->assertOk();
 
         $this->assertNotContains('Budaya', $response->json('meta.filters.categories'));
         $this->assertNotContains('Budaya', array_column($response->json('data'), 'category'));
 
-        expect(DB::table('destinations')->where('image_url', 'not like', 'http%')->count())->toBe(0);
+        expect(DB::table('destinations')->where('image', 'not like', 'http%')->whereNotNull('image')->count())
+            ->toBe(0);
         expect(DB::table('destinations')->where('category', 'Budaya')->count())->toBe(0);
 
         $this->assertDatabaseMissing('destinations', [
@@ -41,5 +41,18 @@ describe('Destination seed data', function () {
         $this->assertDatabaseMissing('destinations', [
             'slug' => 'pasar-kecil-temajuk',
         ]);
+    });
+
+    it('seeds destination galleries from seeder data', function () {
+        $this->seed(DatabaseSeeder::class);
+
+        expect(DB::table('destination_galleries')->count())->toBeGreaterThanOrEqual(20);
+
+        // Spot-check that at least one destination has its galleries
+        $pantai = DB::table('destinations')->where('slug', 'pantai-temajuk')->first();
+        expect($pantai)->not->toBeNull();
+
+        $galleryCount = DB::table('destination_galleries')->where('destination_id', $pantai->id)->count();
+        expect($galleryCount)->toBeGreaterThanOrEqual(3);
     });
 });

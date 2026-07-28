@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Accomodation\ListAccomodationRequest;
 use App\Http\Requests\Accomodation\SaveAccomodationRequest;
+use App\Http\Requests\Accomodation\UpdateAccomodationRequest;
 use App\Http\Resources\AccomodationResource;
 use App\Models\Accomodation;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,7 +42,7 @@ final class AccomodationController extends Controller
     public function show(Accomodation $accomodation): JsonResponse
     {
         return $this->successResponse(
-            data: new AccomodationResource($accomodation->load('roomTypes')),
+            data: new AccomodationResource($accomodation->load('roomTypes', 'accomodationGalleries')),
         );
     }
 
@@ -69,20 +70,22 @@ final class AccomodationController extends Controller
         }
 
         return $this->successResponse(
-            data: new AccomodationResource($accomodation->load('roomTypes')),
+            data: new AccomodationResource($accomodation->load('roomTypes', 'accomodationGalleries')),
             message: 'Akomodasi berhasil dibuat.',
             status: Response::HTTP_CREATED,
         );
     }
 
-    public function update(SaveAccomodationRequest $request, Accomodation $accomodation): JsonResponse
+    public function update(UpdateAccomodationRequest $request, Accomodation $accomodation): JsonResponse
     {
         $updateAccomodation = Accomodation::findOrFail($accomodation->id);
         $updateAccomodationData = $request->accomodationAttributes();
 
-        if ($request->hasFile('image') && $updateAccomodation['image'] != $request->image) {
-            Storage::disk('public')->delete($updateAccomodation['image']);
+        if ($request->hasFile('image')) {
+            Storage::disk('public')->delete($updateAccomodation->image);
             $updateAccomodationData['image'] = $request->file('image')->store('accomodations', 'public');
+        } else {
+            $updateAccomodationData['image'] = $updateAccomodation->image;
         }
 
         $updateAccomodation->update($updateAccomodationData);
@@ -90,7 +93,7 @@ final class AccomodationController extends Controller
         $this->syncRoomTypes($accomodation, $request->roomTypeAttributes());
 
         return $this->successResponse(
-            data: new AccomodationResource($accomodation->refresh()->load('roomTypes')),
+            data: new AccomodationResource($accomodation->refresh()->load('roomTypes', 'accomodationGalleries')),
             message: 'Akomodasi berhasil diperbarui.',
         );
     }
@@ -107,7 +110,7 @@ final class AccomodationController extends Controller
 
     private function paginatedAccomodations(ListAccomodationRequest $request, bool $searchDescription): LengthAwarePaginator
     {
-        $query = Accomodation::query()->with('roomTypes');
+        $query = Accomodation::query()->with('roomTypes', 'accomodationGalleries');
         $search = $request->search();
         $category = $request->category();
 
@@ -126,7 +129,7 @@ final class AccomodationController extends Controller
         }
 
         return $query
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->paginate($request->perPage())
             ->withQueryString();
     }

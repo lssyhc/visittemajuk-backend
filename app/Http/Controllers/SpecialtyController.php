@@ -29,26 +29,6 @@ final class SpecialtyController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Specialty $specialty): JsonResponse
-    {
-        $showCulinarySpecialties = Specialty::where('culinary_id', $specialty->id)->get();
-
-        return $this->successResponse(
-            data: SpecialtyResource::collection($showCulinarySpecialties),
-        );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Specialty $specialty)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(SaveSpecialtyRequest $request, Specialty $specialty)

@@ -56,6 +56,19 @@ final class User extends Authenticatable
 
     public function createApiToken(): NewAccessToken
     {
+        $maxTokens = 5;
+
+        $existingTokens = $this->tokens()
+            ->where('name', self::API_TOKEN_NAME)
+            ->orderBy('created_at', 'asc')
+            ->pluck('id');
+
+        if ($existingTokens->count() >= $maxTokens) {
+            $this->tokens()
+                ->whereIn('id', $existingTokens->take($existingTokens->count() - $maxTokens + 1))
+                ->delete();
+        }
+
         return $this->createToken(
             self::API_TOKEN_NAME,
             self::API_TOKEN_ABILITIES,

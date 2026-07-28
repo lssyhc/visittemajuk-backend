@@ -15,7 +15,9 @@ final class SaveAccomodationRequest extends FormRequest
 
     public function rules(): array
     {
-        $image = $this->hasFile('image') ? 'required|image|mimes:jpg,jpeg,webp|max:1024' : 'required|string|max:255';
+        $image = $this->hasFile('image')
+            ? 'required|image|mimes:jpg,jpeg,webp|max:1024'
+            : 'required|string|max:255';
 
         return [
             'title' => ['required', 'string', 'max:255'],

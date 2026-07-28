@@ -19,7 +19,7 @@ final class SaveCulinaryGalleriesRequest extends FormRequest
 
         return [
             'image' => $image,
-            'culinary_id' => ['required', 'integer'],
+            'culinary_id' => ['required', 'integer', 'exists:culinaries,id'],
         ];
     }
 

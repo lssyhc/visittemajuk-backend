@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Requests\Destination;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 
-final class SaveDestinationRequest extends FormRequest
+final class UpdateDestinationRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -19,27 +20,22 @@ final class SaveDestinationRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'fullDescription' => ['required', 'string'],
-            'imageUrl' => ['required', 'string', 'url', 'max:2048'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,webp', 'max:1024'],
             'category' => ['required', 'string', 'max:255'],
             'price' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string'],
+            'locationMap' => ['nullable', 'string', 'max:512'],
             'openHours' => ['required', 'string', 'max:255'],
             'facilities' => ['present', 'array'],
             'facilities.*' => ['required', 'string', 'max:255'],
             'activities' => ['present', 'array'],
             'activities.*' => ['required', 'string', 'max:255'],
             'tips' => ['present', 'array'],
-            'tips.*' => ['required', 'string'],
-            'gallery' => ['present', 'array'],
-            'gallery.*' => ['required', 'string', 'url', 'max:2048'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'imageUrl.url' => 'URL gambar utama harus berupa URL yang valid.',
-            'gallery.*.url' => 'URL galeri harus berupa URL yang valid.',
+            'tips.*' => ['required', 'string', 'max:512'],
+            'gallery' => ['sometimes', 'array'],
+            'gallery.*' => ['image', 'mimes:jpg,jpeg,webp', 'max:1024'],
+            'removed_gallery_ids' => ['sometimes', 'array'],
+            'removed_gallery_ids.*' => ['integer', 'exists:destination_galleries,id'],
         ];
     }
 
@@ -48,15 +44,14 @@ final class SaveDestinationRequest extends FormRequest
      *     title: string,
      *     description: string,
      *     full_description: string,
-     *     image_url: string,
      *     category: string,
      *     price: string,
      *     location: string,
+     *     location_map: string|null,
      *     open_hours: string,
      *     facilities: list<string>,
      *     activities: list<string>,
-     *     tips: list<string>,
-     *     gallery: list<string>
+     *     tips: list<string>
      * }
      */
     public function destinationAttributes(): array
@@ -67,15 +62,30 @@ final class SaveDestinationRequest extends FormRequest
             'title' => (string) $validated['title'],
             'description' => (string) $validated['description'],
             'full_description' => (string) $validated['fullDescription'],
-            'image_url' => (string) $validated['imageUrl'],
             'category' => (string) $validated['category'],
             'price' => (string) $validated['price'],
             'location' => (string) $validated['location'],
+            'location_map' => isset($validated['locationMap']) ? (string) $validated['locationMap'] : null,
             'open_hours' => (string) $validated['openHours'],
             'facilities' => array_values($validated['facilities']),
             'activities' => array_values($validated['activities']),
             'tips' => array_values($validated['tips']),
-            'gallery' => array_values($validated['gallery']),
         ];
+    }
+
+    /**
+     * @return array<int, UploadedFile>
+     */
+    public function galleryFiles(): array
+    {
+        return $this->file('gallery') ?? [];
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function removedGalleryIds(): array
+    {
+        return array_map('intval', $this->validated('removed_gallery_ids') ?? []);
     }
 }
