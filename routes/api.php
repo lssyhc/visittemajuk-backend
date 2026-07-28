@@ -24,8 +24,6 @@ use App\Http\Controllers\SpecialtyController;
 use App\Http\Controllers\TransportationController;
 use App\Http\Controllers\TransportationStepsController;
 use App\Http\Controllers\TransportationTipsController;
-use App\Http\Controllers\PhotoSpotController;
-use App\Http\Controllers\PhotoSpotGalleriesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 

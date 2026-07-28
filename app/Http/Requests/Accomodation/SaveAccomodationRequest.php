@@ -44,8 +44,13 @@ final class SaveAccomodationRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'image.mimes' => 'Gambar harus berformat jpg, jpeg, atau webp.',
+            'image.max' => 'Ukuran gambar tidak boleh lebih dari 1 MB.',
             'category.in' => 'Kategori harus salah satu dari: resort, wisma, bungalow, homestay, villa.',
             'siteUrl.url' => 'URL website harus berupa URL yang valid.',
+            'facilities.present' => 'Fasilitas wajib diisi.',
+            'facilities.*.string' => 'Fasilitas harus berupa string.',
+            'roomTypes.present' => 'Tipe kamar wajib disediakan.',
             'roomTypes.*.name.required' => 'Nama tipe kamar wajib diisi.',
             'roomTypes.*.description.required' => 'Deskripsi tipe kamar wajib diisi.',
             'roomTypes.*.capacity.integer' => 'Kapasitas tipe kamar harus berupa angka bulat.',
