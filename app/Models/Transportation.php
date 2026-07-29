@@ -22,11 +22,11 @@ final class Transportation extends Model
 
     public function steps(): HasMany
     {
-        return $this->hasMany(TransportationSteps::class);
+        return $this->hasMany(TransportationSteps::class)->orderBy('order', 'asc');
     }
 
     public function tips(): HasMany
     {
-        return $this->hasMany(TransportationTips::class);
+        return $this->hasMany(TransportationTips::class)->orderBy('order', 'asc');
     }
 }

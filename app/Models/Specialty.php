@@ -13,6 +13,7 @@ final class Specialty extends Model
 
     protected $fillable = [
         'menu',
+        'order',
         'culinary_id',
     ];
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->string('duration');
+            $table->integer('order');
             $table->string('cost');
             $table->foreignId('transportation_id')->constrained()->cascadeOnDelete();
             $table->string('vehicle');

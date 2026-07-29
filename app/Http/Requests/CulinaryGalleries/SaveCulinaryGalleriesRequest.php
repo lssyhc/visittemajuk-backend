@@ -19,6 +19,7 @@ final class SaveCulinaryGalleriesRequest extends FormRequest
 
         return [
             'image' => $image,
+            'order' => ['required', 'integer'],
             'culinary_id' => ['required', 'integer', 'exists:culinaries,id'],
         ];
     }
@@ -26,6 +27,7 @@ final class SaveCulinaryGalleriesRequest extends FormRequest
     /**
      * @return array{
      *     image: string,
+     *     order: int,
      *     culinary_id: int
      * }
      */
@@ -35,6 +37,7 @@ final class SaveCulinaryGalleriesRequest extends FormRequest
 
         return [
             'image' => (string) $validated['image'],
+            'order' => (int) $validated['order'],
             'culinary_id' => (int) $validated['culinary_id'],
         ];
     }

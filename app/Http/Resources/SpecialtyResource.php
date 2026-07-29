@@ -27,6 +27,7 @@ final class SpecialtyResource extends JsonResource
         return [
             'id' => $specialty->id,
             'menu' => $specialty->menu,
+            'order' => $specialty->order,
             'culinary_id' => $specialty->culinary_id,
         ];
     }

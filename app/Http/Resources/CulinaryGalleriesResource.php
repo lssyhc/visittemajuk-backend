@@ -27,6 +27,7 @@ final class CulinaryGalleriesResource extends JsonResource
         return [
             'id' => $culinaryGalleries->id,
             'image' => $culinaryGalleries->image,
+            'order' => $culinaryGalleries->order,
             'culinary_id' => $culinaryGalleries->culinary_id,
         ];
     }

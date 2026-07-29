@@ -34,9 +34,9 @@ final class CulinarySeeder extends Seeder
                 Specialty::query()->updateOrCreate(
                     [
                         'culinary_id' => $culinary->id,
-                        'menu' => $menu,
+                        'menu' => $menu['menu'],
                     ],
-                    ['culinary_id' => $culinary->id, 'menu' => $menu],
+                    $menu + ['culinary_id' => $culinary->id],
                 );
             }
 
@@ -44,9 +44,9 @@ final class CulinarySeeder extends Seeder
                 CulinaryGalleries::query()->updateOrCreate(
                     [
                         'culinary_id' => $culinary->id,
-                        'image' => $imagePath,
+                        'image' => $imagePath['image'],
                     ],
-                    ['culinary_id' => $culinary->id, 'image' => $imagePath],
+                    $imagePath + ['culinary_id' => $culinary->id],
                 );
             }
         }
@@ -71,16 +71,40 @@ final class CulinarySeeder extends Seeder
                 'open_hours' => '08.00 - 21.00 WIB',
                 'contact' => '+62 812-3456-7890',
                 'specialties' => [
-                    'Ikan Bakar Sambal Dabu-Dabu',
-                    'Udang Galah Bumbu Rujak',
-                    'Kepiting Saus Padang',
-                    'Sup Ikan Kuah Asam',
-                    'Nasi Goreng Seafood Spesial',
+                    [
+                        'menu' => 'Ikan Bakar Sambal Dabu-Dabu',
+                        'order' => 1,
+                    ],
+                    [
+                        'menu' => 'Udang Galah Bumbu Rujak',
+                        'order' => 2,
+                    ],
+                    [
+                        'menu' => 'Kepiting Saus Padang',
+                        'order' => 3,
+                    ],
+                    [
+                        'menu' => 'Sup Ikan Kuah Asam',
+                        'order' => 4,
+                    ],
+                    [
+                        'menu' => 'Nasi Goreng Seafood Spesial',
+                        'order' => 5,
+                    ],
                 ],
                 'galleries' => [
-                    'https://images.pexels.com/photos/323682/pexels-photo-323682.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/262959/pexels-photo-262959.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/725997/pexels-photo-725997.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                    [
+                        'image' => 'https://images.pexels.com/photos/323682/pexels-photo-323682.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 1,
+                    ],
+                    [
+                        'image' => 'https://images.pexels.com/photos/262959/pexels-photo-262959.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 2,
+                    ],
+                    [
+                        'image' => 'https://images.pexels.com/photos/725997/pexels-photo-725997.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 3,
+                    ],
                 ],
             ],
             [
@@ -96,15 +120,36 @@ final class CulinarySeeder extends Seeder
                 'open_hours' => '06.00 - 20.00 WIB',
                 'contact' => '+62 813-9876-5432',
                 'specialties' => [
-                    'Nasi Campur Melayu',
-                    'Ayam Masak Kuning',
-                    'Sayur Pakis Santan',
-                    'Ikan Asin Jambal Roti',
-                    'Kue Basah Tradisional',
+                    [
+                        'menu' => 'Nasi Campur Melayu',
+                        'order' => 1,
+                    ],
+                    [
+                        'menu' => 'Ayam Masak Kuning',
+                        'order' => 2,
+                    ],
+                    [
+                        'menu' => 'Sayur Pakis Santan',
+                        'order' => 3,
+                    ],
+                    [
+                        'menu' => 'Ikan Asin Jambal Roti',
+                        'order' => 4,
+                    ],
+                    [
+                        'menu' => 'Kue Basah Tradisional',
+                        'order' => 5,
+                    ],
                 ],
                 'galleries' => [
-                    'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/5907597/pexels-photo-5907597.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                    [
+                        'image' => 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 1,
+                    ],
+                    [
+                        'image' => 'https://images.pexels.com/photos/5907597/pexels-photo-5907597.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 2,
+                    ],
                 ],
             ],
             [
@@ -120,15 +165,36 @@ final class CulinarySeeder extends Seeder
                 'open_hours' => '07.00 - 22.00 WIB',
                 'contact' => '+62 821-5678-9012',
                 'specialties' => [
-                    'Kopi Robusta Temajuk',
-                    'Kopi Susu Aren',
-                    'Es Kopi Kelapa Muda',
-                    'Pisang Goreng Crispy',
-                    'Roti Panggang Mentega Kaya',
+                    [
+                        'menu' => 'Kopi Robusta Temajuk',
+                        'order' => 1,
+                    ],
+                    [
+                        'menu' => 'Kopi Susu Aren',
+                        'order' => 2,
+                    ],
+                    [
+                        'menu' => 'Es Kopi Kelapa Muda',
+                        'order' => 3,
+                    ],
+                    [
+                        'menu' => 'Pisang Goreng Crispy',
+                        'order' => 4,
+                    ],
+                    [
+                        'menu' => 'Roti Panggang Mentega Kaya',
+                        'order' => 5,
+                    ],
                 ],
                 'galleries' => [
-                    'https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                    [
+                        'image' => 'https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 1,
+                    ],
+                    [
+                        'image' => 'https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 2,
+                    ],
                 ],
             ],
             [
@@ -144,15 +210,36 @@ final class CulinarySeeder extends Seeder
                 'open_hours' => '16.00 - 22.00 WIB',
                 'contact' => '+62 853-2345-6789',
                 'specialties' => [
-                    'Ikan Tongkol Bakar Arang',
-                    'Cumi Bakar Madu',
-                    'Udang Bakar Bumbu Rujak',
-                    'Ikan Kakap Merah Panggang',
-                    'Kerang Rebus Sambal Kecap',
+                    [
+                        'menu' => 'Ikan Tongkol Bakar Arang',
+                        'order' => 1,
+                    ],
+                    [
+                        'menu' => 'Cumi Bakar Madu',
+                        'order' => 2,
+                    ],
+                    [
+                        'menu' => 'Udang Bakar Bumbu Rujak',
+                        'order' => 3,
+                    ],
+                    [
+                        'menu' => 'Ikan Kakap Merah Panggang',
+                        'order' => 4,
+                    ],
+                    [
+                        'menu' => 'Kerang Rebus Sambal Kecap',
+                        'order' => 5,
+                    ],
                 ],
                 'galleries' => [
-                    'https://images.pexels.com/photos/8951506/pexels-photo-8951506.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-                    'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                    [
+                        'image' => 'https://images.pexels.com/photos/8951506/pexels-photo-8951506.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 1,
+                    ],
+                    [
+                        'image' => 'https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+                        'order' => 2,
+                    ],
                 ],
             ],
         ];

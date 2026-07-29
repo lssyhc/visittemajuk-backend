@@ -27,6 +27,7 @@ final class TransportationStepsResource extends JsonResource
         return [
             'id' => $transportationSteps->id,
             'description' => $transportationSteps->description,
+            'order' => $transportationSteps->order,
             'duration' => $transportationSteps->duration,
             'cost' => $transportationSteps->cost,
             'transportation_id' => $transportationSteps->transportation_id,

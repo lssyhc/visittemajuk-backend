@@ -13,6 +13,7 @@ final class TransportationSteps extends Model
 
     protected $fillable = [
         'description',
+        'order',
         'duration',
         'cost',
         'transportation_id',

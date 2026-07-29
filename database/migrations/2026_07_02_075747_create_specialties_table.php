@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('specialties', function (Blueprint $table) {
             $table->id();
             $table->string('menu');
+            $table->integer('order');
             $table->foreignId('culinary_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
