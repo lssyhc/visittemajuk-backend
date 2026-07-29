@@ -11,30 +11,34 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 chdir($root);
 
+$inDocker = getenv('DOCKER_CONTAINER') === 'true' || is_file('/.dockerenv');
+
 $envFile = $root.'/.env.testing';
 $template = $root.'/.env.testing.example';
 
-if (! is_file($envFile) && is_file($template)) {
+if (! $inDocker && ! is_file($envFile) && is_file($template)) {
     copy($template, $envFile);
     fwrite(STDERR, '[test] copied .env.testing.example to .env.testing'.PHP_EOL);
 }
 
 // Drop every env var Laravel reads from so a polluted host shell can't
 // silently override the testing configuration that .env.testing declares.
-$wipe = [
-    'APP_ENV', 'APP_KEY', 'APP_DEBUG', 'APP_URL',
-    'APP_LOCALE', 'APP_FALLBACK_LOCALE', 'APP_FAKER_LOCALE', 'APP_MAINTENANCE_DRIVER',
-    'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB_URL',
-    'CACHE_STORE', 'QUEUE_CONNECTION', 'SESSION_DRIVER', 'BROADCAST_CONNECTION',
-    'MAIL_MAILER', 'LOG_CHANNEL', 'LOG_STACK', 'LOG_LEVEL',
-    'BCRYPT_ROUNDS', 'FILESYSTEM_DISK',
-    'SANCTUM_STATEFUL_DOMAINS', 'SANCTUM_TOKEN_EXPIRATION',
-    'FRONTEND_URLS', 'APP_NAME',
-];
+if (! $inDocker) {
+    $wipe = [
+        'APP_ENV', 'APP_KEY', 'APP_DEBUG', 'APP_URL',
+        'APP_LOCALE', 'APP_FALLBACK_LOCALE', 'APP_FAKER_LOCALE', 'APP_MAINTENANCE_DRIVER',
+        'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB_URL',
+        'CACHE_STORE', 'QUEUE_CONNECTION', 'SESSION_DRIVER', 'BROADCAST_CONNECTION',
+        'MAIL_MAILER', 'LOG_CHANNEL', 'LOG_STACK', 'LOG_LEVEL',
+        'BCRYPT_ROUNDS', 'FILESYSTEM_DISK',
+        'SANCTUM_STATEFUL_DOMAINS', 'SANCTUM_TOKEN_EXPIRATION',
+        'FRONTEND_URLS', 'APP_NAME',
+    ];
 
-foreach ($wipe as $key) {
-    unset($GLOBALS['_ENV'][$key], $GLOBALS['_SERVER'][$key]);
-    putenv($key);
+    foreach ($wipe as $key) {
+        unset($GLOBALS['_ENV'][$key], $GLOBALS['_SERVER'][$key]);
+        putenv($key);
+    }
 }
 
 passthru(escapeshellcmd(PHP_BINARY).' artisan config:clear --ansi', $clearStatus);

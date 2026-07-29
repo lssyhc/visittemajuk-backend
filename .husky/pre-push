@@ -1,3 +1,26 @@
 #!/usr/bin/env sh
-composer quality
-npm run format:check
+
+run_host() {
+    composer quality
+    npm run format:check
+}
+
+run_docker() {
+    docker compose run --rm -T tools composer quality
+    docker compose run --rm -T tools bash -lc "npm run format:check"
+}
+
+if [ -f /.dockerenv ] || [ "${CI:-}" = "true" ]; then
+    run_host
+elif docker compose ps --status running tools >/dev/null 2>&1; then
+    run_docker
+elif docker compose ps --status running db >/dev/null 2>&1; then
+    run_docker
+elif command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+    echo "[pre-push] starting containers for checks..."
+    docker compose up -d db
+    run_docker
+    docker compose kill tools node >/dev/null 2>&1 || true
+else
+    run_host
+fi

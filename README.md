@@ -66,7 +66,7 @@ php artisan storage:link
 
 `.env.testing` is git-ignored because it carries a real `APP_KEY`, and that key differs across developers and CI runs. The committed template is `.env.testing.example`.
 
-`composer test` copies the template into `.env.testing` automatically on first run (see `scripts/run-tests.php`), so the manual setup below is only needed if you want to run `php artisan` commands against the testing environment yourself:
+`composer test` copies the template into `.env.testing` automatically on first run when running natively on the host (see `scripts/run-tests.php`). Inside Docker, the `tools` container receives its environment from `docker-compose.yml` instead. The manual setup below is only needed if you want to run `php artisan` commands against the testing environment yourself:
 
 ```bash
 cp .env.testing.example .env.testing
@@ -272,7 +272,7 @@ Husky hooks are installed by `npm install` (via the `prepare` script):
 
 - `pre-commit`: runs lint-staged — Pint for `*.php`, Prettier for `*.json`, `*.md`, `*.js`, `scripts/**/*.mjs`, and `.github/**/*.{yml,yaml,md}`.
 - `commit-msg`: validates Conventional Commit messages.
-- `pre-push`: runs `composer quality` and `npm run format:check`.
+- `pre-push`: runs `composer quality` and `npm run format:check`. When Docker Compose is available (the `db` service is running), it auto-routes the checks through the `tools` container so every teammate runs the quality gate in the same environment regardless of their local PHP/MySQL setup.
 
 See `docs/git-workflow.md` for the full branching model, commit format, and PR checklist.
 
