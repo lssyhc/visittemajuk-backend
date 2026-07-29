@@ -13,6 +13,7 @@ final class CulinaryGalleries extends Model
 
     protected $fillable = [
         'image',
+        'order',
         'culinary_id',
     ];
 

@@ -17,6 +17,7 @@ final class SaveTransportationStepsRequest extends FormRequest
     {
         return [
             'description' => ['required', 'string', 'max:255'],
+            'order' => ['required', 'int'],
             'duration' => ['required', 'string', 'max:255'],
             'cost' => ['required', 'string', 'max:255'],
             'transportation_id' => ['required', 'integer', 'exists:transportations,id'],
@@ -27,6 +28,7 @@ final class SaveTransportationStepsRequest extends FormRequest
     /**
      * @return array{
      *     description: string,
+     *     order: int,
      *     duration: string,
      *     cost: string,
      *     transportation_id: int,
@@ -39,6 +41,7 @@ final class SaveTransportationStepsRequest extends FormRequest
 
         return [
             'description' => (string) $validated['description'],
+            'order' => (int) $validated['order'],
             'duration' => (string) $validated['duration'],
             'cost' => (string) $validated['cost'],
             'transportation_id' => (int) $validated['transportation_id'],

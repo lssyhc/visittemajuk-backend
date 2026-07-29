@@ -27,12 +27,12 @@ final class Culinary extends Model
 
     public function specialties(): HasMany
     {
-        return $this->hasMany(Specialty::class);
+        return $this->hasMany(Specialty::class)->orderBy('order', 'asc');
     }
 
     public function culinaryGalleries(): HasMany
     {
-        return $this->hasMany(CulinaryGalleries::class);
+        return $this->hasMany(CulinaryGalleries::class)->orderBy('order', 'asc');
     }
 
     public function resolveRouteBinding($value, $field = null)

@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('transportationtips', function (Blueprint $table) {
             $table->id();
             $table->string('tip');
+            $table->integer('order');
             $table->foreignId('transportation_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

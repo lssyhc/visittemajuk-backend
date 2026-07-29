@@ -17,6 +17,7 @@ final class SaveSpecialtyRequest extends FormRequest
     {
         return [
             'menu' => ['required', 'string', 'max:255'],
+            'order' => ['required', 'integer'],
             'culinary_id' => ['required', 'integer'],
         ];
     }
@@ -24,6 +25,7 @@ final class SaveSpecialtyRequest extends FormRequest
     /**
      * @return array{
      *     menu: string,
+     *     order: int,
      *     culinary_id: int,
      *
      * }
@@ -34,6 +36,7 @@ final class SaveSpecialtyRequest extends FormRequest
 
         return [
             'menu' => (string) $validated['menu'],
+            'order' => (int) $validated['order'],
             'culinary_id' => (int) $validated['culinary_id'],
         ];
     }

@@ -17,6 +17,7 @@ final class SaveTransportationTipsRequest extends FormRequest
     {
         return [
             'tip' => ['required', 'string', 'max:255'],
+            'order' => ['required', 'int'],
             'transportation_id' => ['required', 'integer', 'exists:transportations,id'],
         ];
     }
@@ -24,6 +25,7 @@ final class SaveTransportationTipsRequest extends FormRequest
     /**
      * @return array{
      *     tip: string,
+     *     order: int,
      *     transportation_id: int,
      * }
      */
@@ -33,6 +35,7 @@ final class SaveTransportationTipsRequest extends FormRequest
 
         return [
             'tip' => (string) $validated['tip'],
+            'order' => (int) $validated['order'],
             'transportation_id' => (int) $validated['transportation_id'],
         ];
     }

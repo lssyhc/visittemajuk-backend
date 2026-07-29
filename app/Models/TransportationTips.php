@@ -13,6 +13,7 @@ final class TransportationTips extends Model
 
     protected $fillable = [
         'tip',
+        'order',
         'transportation_id',
     ];
 

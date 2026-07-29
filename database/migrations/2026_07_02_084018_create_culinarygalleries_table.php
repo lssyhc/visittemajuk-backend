@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('culinarygalleries', function (Blueprint $table) {
             $table->id();
             $table->string('image');
+            $table->integer('order');
             $table->foreignId('culinary_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
