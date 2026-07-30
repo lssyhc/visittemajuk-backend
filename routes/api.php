@@ -90,6 +90,13 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::post('/culinaryGalleries', [CulinaryGalleriesController::class, 'store']);
     Route::delete('/culinaryGalleries/{culinaryGalleries:id}', [CulinaryGalleriesController::class, 'destroy']);
 
+    Route::post('/photoSpots', [PhotoSpotController::class, 'store']);
+    Route::post('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'update']);
+    Route::delete('/photoSpots/{photoSpot:id}', [PhotoSpotController::class, 'destroy']);
+
+    Route::post('/photoSpotGalleries', [PhotoSpotGalleriesController::class, 'store']);
+    Route::delete('/photoSpotGalleries/{photoSpotGalleries:id}', [PhotoSpotGalleriesController::class, 'destroy']);
+
     Route::post('/transportations', [TransportationController::class, 'store']);
     Route::post('/transportations/{transportation:id}', [TransportationController::class, 'update']);
     Route::delete('/transportations/{transportation:id}', [TransportationController::class, 'destroy']);
