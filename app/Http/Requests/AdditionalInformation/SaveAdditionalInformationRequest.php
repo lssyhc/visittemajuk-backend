@@ -18,7 +18,7 @@ final class SaveAdditionalInformationRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string'],
-            'description' => ['required', 'string'],
+            'description' => ['required', 'string', 'max:255'],
         ];
     }
 
