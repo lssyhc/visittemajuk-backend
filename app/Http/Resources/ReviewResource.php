@@ -43,7 +43,7 @@ final class ReviewResource extends JsonResource
             'name' => $review->name,
             'text' => $review->text,
             'destination' => $destination ? [
-                'id' => $destination->id,
+                'id' => $destination->slug,
                 'title' => $destination->title,
             ] : null,
             'rating' => $review->rating,

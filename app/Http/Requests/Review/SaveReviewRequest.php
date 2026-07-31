@@ -6,6 +6,7 @@ namespace App\Http\Requests\Review;
 
 use App\Models\Destination;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 final class SaveReviewRequest extends FormRequest
 {
@@ -46,14 +47,20 @@ final class SaveReviewRequest extends FormRequest
     {
         $validated = $this->validated();
 
-        $destinationId = (int) Destination::query()
+        $destinationId = Destination::query()
             ->where('slug', (string) $validated['destination_slug'])
             ->value('id');
+
+        if ($destinationId === null) {
+            throw ValidationException::withMessages([
+                'destination_slug' => 'Destinasi yang dipilih tidak ditemukan.',
+            ]);
+        }
 
         return [
             'name' => (string) $validated['name'],
             'text' => (string) $validated['text'],
-            'destination_id' => $destinationId,
+            'destination_id' => (int) $destinationId,
             'rating' => (int) $validated['rating'],
         ];
     }
