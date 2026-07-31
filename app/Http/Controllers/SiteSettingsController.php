@@ -62,8 +62,8 @@ final class SiteSettingsController extends Controller
 
         $this->writeArray(self::KEY_SECTION_TITLES, $validated['home']['section_titles'] ?? null);
         $this->writeMixed(self::KEY_FEATURES, $validated['home']['features'] ?? null);
-        $this->writeArray(self::KEY_BRAND, $validated['footer']['brand'] ?? null);
-        $this->writeArray(self::KEY_CONTACT, $validated['footer']['contact'] ?? null);
+        $this->writeArray(self::KEY_BRAND, $request->input('footer.brand'));
+        $this->writeArray(self::KEY_CONTACT, $request->input('footer.contact'));
 
         $this->writeWithImage(self::KEY_HERO, $validated['home']['hero'] ?? null, $request);
         $this->writeWithImage(self::KEY_INTRO, $validated['home']['intro'] ?? null, $request);
@@ -73,6 +73,19 @@ final class SiteSettingsController extends Controller
             message: 'Pengaturan situs berhasil diperbarui.',
             status: Response::HTTP_OK,
         );
+    }
+
+    private function sanitizeScalars(mixed $data): mixed
+    {
+        if (is_string($data)) {
+            return strip_tags($data);
+        }
+
+        if (is_array($data)) {
+            return array_map([$this, 'sanitizeScalars'], $data);
+        }
+
+        return $data;
     }
 
     /**
@@ -87,7 +100,9 @@ final class SiteSettingsController extends Controller
         $payload = [];
         foreach ($data as $k => $v) {
             if (is_scalar($v)) {
-                $payload[$k] = $v;
+                $payload[$k] = is_string($v) ? strip_tags($v) : $v;
+            } elseif (is_array($v)) {
+                $payload[$k] = json_encode($v);
             }
         }
 
@@ -117,9 +132,22 @@ final class SiteSettingsController extends Controller
             return;
         }
 
+        $sanitized = $this->sanitizeScalars($data);
+
+        if (is_array($sanitized)) {
+            $existing = SiteSetting::query()->where('key', $key)->first();
+            if ($existing !== null) {
+                /** @var mixed $existingValue */
+                $existingValue = $existing->value;
+                if (is_array($existingValue)) {
+                    $sanitized = array_replace_recursive($existingValue, $sanitized);
+                }
+            }
+        }
+
         SiteSetting::query()->updateOrCreate(
             ['key' => $key],
-            ['value' => $data],
+            ['value' => $sanitized],
         );
     }
 
@@ -138,7 +166,7 @@ final class SiteSettingsController extends Controller
                 continue;
             }
             if (is_scalar($v)) {
-                $payload[$k] = $v;
+                $payload[$k] = is_string($v) ? strip_tags($v) : $v;
             }
         }
 
