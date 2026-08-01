@@ -35,7 +35,10 @@ final class ReviewController extends Controller
     {
         $attributes = $request->reviewAttributes();
 
-        $review = Review::query()->create($attributes);
+        $review = Review::query()->updateOrCreate(
+            ['destination_id' => $attributes['destination_id'], 'name' => $attributes['name']],
+            ['text' => $attributes['text'], 'rating' => $attributes['rating']],
+        );
 
         return $this->successResponse(
             data: new ReviewResource($review),
@@ -52,11 +55,12 @@ final class ReviewController extends Controller
         $rate = (int) $request->rate();
 
         if ($search !== null) {
-            $query->where(function (Builder $query) use ($search, $searchText): void {
-                $query->where('name', 'like', '%'.$search.'%');
+            $escaped = addcslashes($search, '%_');
+            $query->where(function (Builder $query) use ($escaped, $searchText): void {
+                $query->where('name', 'like', '%'.$escaped.'%');
 
                 if ($searchText) {
-                    $query->orWhere('text', 'like', '%'.$search.'%');
+                    $query->orWhere('text', 'like', '%'.$escaped.'%');
                 }
             });
         }
@@ -71,7 +75,7 @@ final class ReviewController extends Controller
 
         return $query
             ->orderBy('id', 'desc')
-            ->with('destination:id,title')
+            ->with('destination:id,slug,title')
             ->paginate($request->perPage())
             ->withQueryString();
     }
