@@ -19,6 +19,9 @@ final class Article extends Model
         'slug',
     ];
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
