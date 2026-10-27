@@ -6,6 +6,7 @@ use App\Http\Controllers\AccomodationController;
 use App\Http\Controllers\AccomodationGalleriesController;
 use App\Http\Controllers\AdditionalCulinaryController;
 use App\Http\Controllers\AdditionalInformationController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\ChangePasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -123,6 +124,10 @@ Route::middleware(['auth:sanctum', 'ability:api:access'])->group(function () {
     Route::post('/banners/{banner:id}', [BannerController::class, 'update']);
     Route::delete('/banners/{banner:id}', [BannerController::class, 'destroy']);
 
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::post('/articles/{article:id}', [ArticleController::class, 'update']);
+    Route::delete('/articles/{article:id}', [ArticleController::class, 'destroy']);
+
 });
 
 Route::get('/site/settings', [SiteSettingsController::class, 'show'])->name('site.settings.show');
@@ -144,3 +149,5 @@ Route::get('/additionalInformation', [AdditionalInformationController::class, 'i
 Route::get('/photoSpots', [PhotoSpotController::class, 'index']);
 Route::get('/photoSpots/{photoSpot}', [PhotoSpotController::class, 'show']);
 Route::get('/banners', [BannerController::class, 'index']);
+Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/{article}', [ArticleController::class, 'show']);
